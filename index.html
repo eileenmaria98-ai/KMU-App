@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KMU-Wegweiser Basel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Inoffizieller Wegweiser für KMU in Basel-Stadt: Bewilligungen, Parkieren, Allmend – nach Situation statt nach Amt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: Suche + Branchenfilter oben, Situationen als Raster; Detail ersetzt das Raster (Hash-Routing). Farben angelehnt an Strassensignale: Signalblau, Markierungsgelb. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #141a26;
+  --muted: #586174;
+  --line: #dde1e8;
+  --accent: #0b4fa8;        /* Signalblau */
+  --accent-ink: #ffffff;
+  --mark: #f2c230;          /* Markierungsgelb */
+  --ok: #1d7a46;
+  --ok-bg: #e5f3ea;
+  --no: #b3261e;
+  --no-bg: #fbe9e7;
+  --warn-bg: #fff6d6;
+  --warn-fg: #6b4e00;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131b; --surface: #171d28; --fg: #e8ecf3; --muted: #9aa4b6; --line: #2a3242;
+    --accent: #5b9bff; --accent-ink: #0b1220; --mark: #e8b923;
+    --ok: #5cc98a; --ok-bg: #12291c; --no: #ff8a80; --no-bg: #331614;
+    --warn-bg: #2e2508; --warn-fg: #f2d27a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131b; --surface: #171d28; --fg: #e8ecf3; --muted: #9aa4b6; --line: #2a3242;
+  --accent: #5b9bff; --accent-ink: #0b1220; --mark: #e8b923;
+  --ok: #5cc98a; --ok-bg: #12291c; --no: #ff8a80; --no-bg: #331614;
+  --warn-bg: #2e2508; --warn-fg: #f2d27a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.55 var(--f-body);
+}
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
+.wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+
+/* Kopf */
+.top { background: var(--accent); color: var(--accent-ink);
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px); }
+.top .wrap { padding-block: 2.25rem 2rem; display: grid; gap: 1.1rem; }
+.brand { display: flex; align-items: center; gap: .6rem; font-family: var(--f-display); font-weight: 700; letter-spacing: .02em; font-size: .95rem; text-decoration: none; color: inherit; }
+.brand .sign { width: 26px; height: 26px; border-radius: 4px; background: var(--accent-ink); color: var(--accent); display: grid; place-items: center; font-weight: 800; font-size: .95rem; }
+.top h1 { font-size: clamp(1.8rem, 4.5vw, 2.8rem); font-weight: 800; max-width: 20ch; }
+.top h1 em { font-style: normal; box-shadow: inset 0 -0.28em 0 var(--mark); color: inherit; }
+.top p { margin: 0; max-width: 60ch; opacity: .9; }
+.search { display: flex; gap: .5rem; flex-wrap: wrap; }
+.search input {
+  flex: 1 1 260px; min-width: 0; font: inherit; font-size: 1.05rem;
+  padding: .85rem 1rem; border-radius: 8px; border: 2px solid transparent;
+  background: var(--surface); color: var(--fg);
+}
+.search input::placeholder { color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.chip {
+  font: 500 .9rem var(--f-body); padding: .4rem .85rem; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid currentColor; background: transparent; color: var(--accent-ink);
+}
+.chip[aria-pressed="true"] { background: var(--accent-ink); color: var(--accent); border-color: var(--accent-ink); }
+
+main .wrap { padding-block: 1.75rem 3rem; display: grid; gap: 1.75rem; }
+
+/* Raster */
+.section-label { font: 600 .78rem var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .75rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 1rem; }
+.card {
+  display: grid; gap: .5rem; align-content: start; text-align: left;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 1.1rem 1.15rem 1.2rem; color: var(--fg); text-decoration: none;
+  transition: border-color .15s, transform .15s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card h3 { font-size: 1.12rem; font-weight: 700; }
+.card p { margin: 0; color: var(--muted); font-size: .95rem; }
+.card .tags { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: .25rem; }
+.tag { font: 500 .74rem var(--f-body); padding: .15rem .5rem; border-radius: 4px; background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.card.featured { border: 2px solid var(--accent); }
+.card.featured .eyebrow { font: 600 .74rem var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 1.25rem; }
+
+/* Kontaktpunkt-Band */
+.help {
+  display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;
+  background: var(--warn-bg); color: var(--warn-fg); border-radius: 10px; padding: 1.1rem 1.25rem;
+}
+.help h2 { font-size: 1.1rem; }
+.help p { margin: .25rem 0 0; }
+.help .contact { font-family: var(--f-mono); font-size: .95rem; text-align: right; white-space: nowrap; }
+@media (max-width: 640px) { .help { grid-template-columns: 1fr; } .help .contact { text-align: left; white-space: normal; } }
+
+/* Detail */
+.back { font: 500 .95rem var(--f-body); color: var(--accent); text-decoration: none; display: inline-flex; gap: .35rem; align-items: center; }
+.detail { display: grid; gap: 1.5rem; }
+.detail header { display: grid; gap: .6rem; }
+.detail h2 { font-size: clamp(1.6rem, 3.6vw, 2.3rem); font-weight: 800; }
+.answer { font-size: 1.12rem; max-width: 65ch; margin: 0; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+@media (max-width: 820px) { .cols { grid-template-columns: 1fr; } }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.2rem 1.25rem; display: grid; gap: .75rem; min-width: 0; }
+.box h3 { font-size: 1.05rem; }
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: .8rem; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2rem 1fr; gap: .6rem; }
+.steps li::before {
+  content: counter(s); font: 700 .95rem var(--f-display); width: 1.8rem; height: 1.8rem; border-radius: 50%;
+  display: grid; place-items: center; background: var(--accent); color: var(--accent-ink);
+}
+.steps li b { display: block; }
+.steps li span { color: var(--muted); font-size: .95rem; }
+
+.rules { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 640px) { .rules { grid-template-columns: 1fr; } }
+.rules > div { border-radius: 10px; padding: 1rem 1.1rem; }
+.rules .ok { background: var(--ok-bg); }
+.rules .no { background: var(--no-bg); }
+.rules h3 { font-size: 1rem; display: flex; gap: .5rem; align-items: center; }
+.rules .ok h3 { color: var(--ok); }
+.rules .no h3 { color: var(--no); }
+.rules ul { margin: .6rem 0 0; padding-left: 1.1rem; display: grid; gap: .35rem; }
+
+.facts { display: grid; gap: .6rem; margin: 0; }
+.facts div { display: grid; gap: .1rem; }
+.facts dt { font: 600 .74rem var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.facts dd { margin: 0; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: .95rem; }
+.conflict { background: var(--warn-bg); color: var(--warn-fg); border-radius: 6px; padding: .5rem .7rem; font-size: .9rem; }
+.links { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.links a { font-weight: 500; overflow-wrap: anywhere; }
+.links a::after { content: " ↗"; }
+.stand { font-size: .85rem; color: var(--muted); }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 1.5rem 2.5rem; color: var(--muted); font-size: .88rem; display: grid; gap: .4rem; }
+footer p { margin: 0; max-width: 75ch; }
+
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><span class="sign" aria-hidden="true">i</span>KMU-Wegweiser Basel</a>
+    <h1>Was willst du <em>heute erledigen</em>?</h1>
+    <p>Die Infos des Kantons Basel-Stadt nach Situation sortiert statt nach Amt: was du brauchst, was es kostet, wo du es beantragst.</p>
+    <form class="search" role="search" id="searchForm">
+      <label for="q" class="sr" hidden>Suche</label>
+      <input id="q" type="search" autocomplete="off" placeholder="z.B. parkieren, Tische draussen, Mulde, Schild …">
+    </form>
+    <div class="chips" id="chips" role="group" aria-label="Branche"></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap" id="view"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Inoffizieller Prototyp.</strong> Das ist kein Angebot des Kantons Basel-Stadt. Alle Angaben ohne Gewähr, zusammengefasst aus öffentlichen Seiten von bs.ch. Verbindlich ist immer die verlinkte offizielle Seite.</p>
+    <p>Stand der Angaben: 19. November 2026.</p>
+  </div>
+</footer>
+
+<script>
+const STAND = "19.11.2026";
+const BRANCHEN = ["Alle", "Gastro", "Handwerk & Bau", "Detailhandel"];
+
+const KONTAKTPUNKT = {
+  name: "Kontaktpunkt für Unternehmen (Amt für Wirtschaft und Arbeit)",
+  adr: "Utengasse 36, 4058 Basel",
+  tel: "+41 61 267 66 99",
+  mail: "business@bs.ch",
+  url: "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/unterstuetzung-von-unternehmen/kontaktpunkt-fuer-unternehmen"
+};
+const ALLMEND = { name: "Allmendverwaltung, Tiefbauamt", adr: "Dufourstrasse 50, 4051 Basel", tel: "+41 61 267 93 57" };
+const BGI = { name: "Bau- und Gastgewerbeinspektorat, Abt. Gastgewerbebewilligungen", tel: "+41 61 267 70 26", mail: "bvdbgi@bs.ch" };
+
+const S = [
+  {
+    id: "gewerbeparkkarte", featured: true,
+    title: "Wo darf ich mit der Gewerbeparkkarte parkieren?",
+    teaser: "Blaue Zone, Parkuhr, Parkverbot: was gilt beim Kunden, was nicht.",
+    branchen: ["Handwerk & Bau", "Gastro"],
+    keys: "parkieren parkkarte gewerbeparkkarte blaue zone parkuhr parkverbot halteverbot handwerker auto lieferwagen fahrzeug catering monteur",
+    answer: "Beim Arbeitseinsatz beim Kunden: in allen blauen Zonen, auf Parkplätzen mit mindestens 90 Minuten Parkdauer (ohne Parkuhr-Gebühr) und im Parkverbot bis 4 Stunden. Vor dem eigenen Firmenstandort gilt sie nicht.",
+    rules: {
+      ok: [
+        "Alle blauen Zonen",
+        "Gebührenfreie und gebührenpflichtige Parkplätze mit erlaubter Parkdauer ab 90 Minuten – keine Parkuhr-Gebühr",
+        "Im Parkverbot bis maximal 4 Stunden, Beginn mit Parkscheibe anzeigen",
+        "Innenstadt (Kernzone) nur während Güterumschlag: Mo–Sa 05:00–11:00"
+      ],
+      no: [
+        "Vor dem eigenen Firmenstandort",
+        "Im Halteverbot oder verkehrsbehindernd",
+        "Auf dem Trottoir, ausser es ist ausdrücklich erlaubt",
+        "Auf beschrifteten Feldern («Taxi», «Polizei», «BVB», «Hotel», «Altersheim» …)",
+        "Wo Parkieren generell verboten ist: Verzweigungen, Radstreifen, Brücken, Nähe Bahnübergänge"
+      ]
+    },
+    steps: [
+      ["Prüfen, ob du berechtigt bist", "Handwerk, Service-Montage, Catering: du brauchst schweres Werkzeug oder Material an wechselnden Orten. Nicht berechtigt: Handelsreisende, Versicherungsagenten, Hauslieferdienste, Bauleiter, PC-Support."],
+      ["Fahrzeug beschriften", "Firmenname gut sichtbar auf dem Fahrzeug. Die Karte gilt nur für das eingetragene Kontrollschild."],
+      ["Online beantragen", "Formular auf bs.ch. Die Karte wird nach dem Ausfüllen auf das gewünschte Datum ausgestellt. Bei nicht handwerkstypischen Fahrzeugen: Fotos des beladenen Fahrzeugs beilegen."],
+      ["Nichts hinterlegen", "Die Karte muss nicht ins Auto gelegt werden. Gültigkeit prüfbar in der App «ParkSmart Basel»."]
+    ],
+    facts: [
+      ["Kosten", "<span class='mono'>CHF 200</span> pro Jahr · Monatskarte <span class='mono'>CHF 35</span>, danach <span class='mono'>CHF 15</span>/Monat · Regionale Karte BS+BL <span class='mono'>CHF 250</span>/Jahr · plus <span class='mono'>CHF 20</span> Bearbeitung"],
+      ["Wer stellt aus", "Kanton Basel-Stadt, Online-Formular"]
+    ],
+    conflict: "In älteren Dokumenten (Verordnung, Medienmitteilung 2010) stehen andere Preise. Massgebend ist das Online-Formular.",
+    links: [
+      ["Gewerbeparkkarte (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/gewerbeparkkarte"],
+      ["Benutzungsbestimmungen Parkkarten", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/benutzungsbestimmungen-parkkarten"]
+    ]
+  },
+  {
+    id: "zufahrt-innenstadt",
+    title: "In die Innenstadt liefern oder zufahren",
+    teaser: "Güterumschlag-Zeiten, Poller, Kurz- und Dauerbewilligung.",
+    branchen: ["Detailhandel", "Gastro", "Handwerk & Bau"],
+    keys: "innenstadt zufahrt liefern lieferung poller freie strasse spalenberg güterumschlag kernzone bewilligung fahren",
+    answer: "Mo–Sa von 05:00 bis 11:00 darfst du ohne Bewilligung in die Kernzone liefern. Ausserhalb dieser Zeit brauchst du eine Kurz- oder Dauerbewilligung, damit die Poller sinken.",
+    steps: [
+      ["Zuerst: geht es in der Güterumschlag-Zeit?", "Mo–Sa 05:00–11:00 ist Liefern ohne Bewilligung erlaubt."],
+      ["Einzelfall: Kurzbewilligung", "Wenn es dringend ist oder nicht im Zeitfenster geht."],
+      ["Regelmässig: Dauerbewilligung", "Für Firmen in der Kernzone mit eigenem Parkplatz oder für regelmässige Lieferung rasch verderblicher Waren."],
+      ["Oft (über 30× pro Jahr): Kundenkonto", "Dann kosten Kurzbewilligungen weniger."]
+    ],
+    facts: [
+      ["Kosten", "Kurzbewilligung <span class='mono'>CHF 20</span> · mit Kundenkonto <span class='mono'>CHF 5</span> · Dauerbewilligung <span class='mono'>CHF 100</span> (für ansässige Betriebe mit verderblicher Ware ohne eigenen Parkplatz gratis, max. 12 Monate)"],
+      ["Wer stellt aus", "Motorfahrzeugkontrolle der Kantonspolizei"]
+    ],
+    conflict: "Die Gesetzessammlung zeigt teils noch eine ältere Fassung (Mo–Fr 06–11 Uhr). Die aktuelle Seite des Kantons nennt Mo–Sa 05–11 Uhr.",
+    links: [
+      ["Zufahrt Innenstadt (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt"],
+      ["Zufahrtsbewilligung Kernzone", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt/zufahrtsbewilligung-zur-kernzone-innenstadt"]
+    ]
+  },
+  {
+    id: "restaurant-eroeffnen",
+    title: "Ein Café oder Restaurant eröffnen",
+    teaser: "Betriebsbewilligung, Baubewilligung, Lebensmittel-Meldung – in dieser Reihenfolge.",
+    branchen: ["Gastro"],
+    keys: "restaurant café cafe bar beiz eröffnen wirtepatent betriebsbewilligung gastgewerbe take-away takeaway bistro übernehmen",
+    answer: "Du brauchst eine persönliche Betriebsbewilligung, meistens eine Baubewilligung für den Umbau und eine Meldung ans Kantonslabor. Vor der Bewilligung darfst du nicht eröffnen.",
+    steps: [
+      ["Bagatellfall prüfen", "Ohne Alkohol, höchstens 20 m² Konsumfläche und 10 Plätze? Dann evtl. keine Bewilligung nötig – aber Bestätigung einholen."],
+      ["Baubewilligung klären", "Für Einrichtung oder Umbau eines Gastrobetriebs ist meist eine Baubewilligung nötig."],
+      ["Betriebsbewilligung beantragen", "Unterlagen: Miet-/Pacht-/Kaufvertrag, ggf. Arbeitsvertrag, Strafregister- und Betreibungsauszug, Fähigkeitsausweis (Wirtepatent)."],
+      ["Lebensmittelbetrieb melden", "Meldeformular mit Selbstkontrollkonzept ans Kantonale Laboratorium."],
+      ["Erst dann eröffnen", "Die Bewilligung ist persönlich. Wechselt die verantwortliche Person, braucht es eine neue."]
+    ],
+    facts: [
+      ["Kosten", "Betriebsbewilligung <span class='mono'>CHF 600</span>"],
+      ["Dauer", "Bei vollständigen Unterlagen ca. 1 Monat"],
+      ["Zuständig", `${BGI.name}<br><span class="mono">${BGI.tel}</span> · <span class="mono">${BGI.mail}</span>`]
+    ],
+    links: [
+      ["Restaurationsbetrieb (bs.ch)", "https://www.bs.ch/bvd/bgi/gastgewerbebewilligungen/restaurationsbetrieb"],
+      ["Bagatellbereich und Take-away", "https://www.bs.ch/ls/node/30412"],
+      ["Formulare Kantonslabor", "https://www.bs.ch/gd/kantonslabor/formulare-und-merkblaetter"]
+    ]
+  },
+  {
+    id: "boulevard",
+    title: "Tische und Stühle draussen (Boulevard)",
+    teaser: "Zwei Bewilligungen nacheinander: Bau, dann Allmend.",
+    branchen: ["Gastro"],
+    keys: "boulevard aussenbewirtung terrasse tische stühle draussen trottoir gartenbeiz sommer",
+    answer: "Für eine neue Boulevardfläche brauchst du zuerst eine Baubewilligung, danach eine Nutzungsbewilligung der Allmendverwaltung. Rechne mit bis zu 3 Monaten.",
+    steps: [
+      ["Baubewilligung", "Beim Bau- und Gastgewerbeinspektorat, wenn du bisher nicht draussen bewirtet hast."],
+      ["Nutzungsbewilligung Allmend", "Mit bewilligtem Situationsplan (1:200), Kopie des Bauentscheids und Angaben zur Möblierung."],
+      ["Auflagen einhalten", "Nachtruhe ab 23 Uhr, keine Beschallung, keine Zäune, Sichtschutzwände oder Zelte."]
+    ],
+    facts: [
+      ["Kosten", "ca. <span class='mono'>CHF 80–88</span> pro m² und Jahr (Zone I) · Zone II 25 % günstiger"],
+      ["Dauer", "In der Regel 3 Monate ab Gesuch"],
+      ["Zuständig", `${ALLMEND.name}<br>${ALLMEND.adr}<br><span class="mono">${ALLMEND.tel}</span>`]
+    ],
+    conflict: "Zwei Seiten nennen unterschiedliche Preise (CHF 80 und CHF 88 pro m²). Vor dem Budgetieren bei der Allmendverwaltung nachfragen.",
+    links: [
+      ["Verkaufen & Bewirten (bs.ch)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/verkaufen-bewirten"],
+      ["Aussenbewirtung – Baubewilligung", "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren/aussenbewirtung"],
+      ["Allgemeine Auflagen (PDF)", "https://media.bs.ch/original_file/c05b8b60bc3c3250a4da59bf086e11fe3579888d/allgemeine-auflagen-fuer-boulevard-restaurants.pdf"]
+    ]
+  },
+  {
+    id: "mulde-geruest",
+    title: "Mulde, Gerüst oder Container auf die Strasse stellen",
+    teaser: "Bis 10 m² und 20 Tage reicht eine Meldung.",
+    branchen: ["Handwerk & Bau"],
+    keys: "mulde gerüst container baustelle bauinstallation kran toilette strasse allmend umbau abfall schutt",
+    answer: "Kleine Installationen (bis 10 m², max. 20 Tage) musst du nur melden. Alles Grössere braucht eine Bewilligung: Mulden und Gerüste mindestens 2 Wochen, Kräne mindestens 3 Monate im Voraus.",
+    steps: [
+      ["Grösse und Dauer abschätzen", "Bis 10 m² und 20 Tage: Meldung mit Formular «Kleinstnutzung», spätestens 10 Arbeitstage vorher, erstmalig gratis."],
+      ["Sonst: Gesuch einreichen", "Mulden, Gerüste, Umschlagplätze: mind. 2 Wochen vorher. Kräne, Containerbühnen: mind. 3 Monate vorher."],
+      ["Richtig aufstellen", "Innerhalb der Parkfeld-Markierung, abgeschrankt, nachts beleuchtet, Mulden auf Holz. Du haftest für Schäden."]
+    ],
+    facts: [
+      ["Kosten", "Je nach Fläche und Dauer, ca. <span class='mono'>CHF 0.15–0.30</span> pro m² und Tag plus Bewilligungsgebühr"],
+      ["Zuständig", `${ALLMEND.name}<br><span class="mono">${ALLMEND.tel}</span>`]
+    ],
+    conflict: "Die Gebührentabelle im Formular ist älter als die aktuelle Richtlinie. Gebühren vorher bestätigen lassen.",
+    links: [
+      ["Bauen & Installieren im öffentlichen Raum", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/bauen-installieren-im-oeffentlichen-raum"],
+      ["Richtlinie Bauinstallationen (PDF)", "https://media.bs.ch/original_file/8dc84ecf536caaab543629406546d63aabdc9ec3/richtlinie-bauinstallationen-4.pdf"]
+    ]
+  },
+  {
+    id: "reklame",
+    title: "Firmenschild, Reklamereiter oder Warenauslage",
+    teaser: "Am Haus: Bauinspektorat. Auf dem Trottoir: Allmendverwaltung.",
+    branchen: ["Detailhandel", "Gastro", "Handwerk & Bau"],
+    keys: "schild firmenschild reklame werbung beschriftung leuchtreklame reklamereiter kundenstopper aufsteller warenauslage schaufenster trottoir",
+    answer: "Ein unbeleuchtetes Firmenschild bis 0,5 m² ist meist bewilligungsfrei (in Schutzzonen meldepflichtig). Ein Reklamereiter oder Waren auf dem Trottoir brauchen eine kostenpflichtige Bewilligung der Allmendverwaltung.",
+    steps: [
+      ["Schild am Gebäude", "Bis 0,5 m², unbeleuchtet: meist frei. Grösser, beleuchtet oder in Schon-/Schutzzone: Formular «Baubewilligungspflichtige Bauten und Anlagen» mit Anhang F, zweifach."],
+      ["Reklamereiter auf dem Trottoir", "Max. 60 × 85 cm, Eingänge und Schaufenster frei lassen. Wird nur mit Begründung bewilligt, z.B. Geschäft ohne Erdgeschoss oder ohne Schaufenster."],
+      ["Warenauslage", "Ebenfalls Gesuch bei der Allmendverwaltung."]
+    ],
+    facts: [
+      ["Kosten", "Reklamereiter ca. <span class='mono'>CHF 500</span> pro m² und Jahr"],
+      ["Zuständig", `Schild: Bau- und Gastgewerbeinspektorat<br>Trottoir: ${ALLMEND.name}, <span class="mono">${ALLMEND.tel}</span>`]
+    ],
+    links: [
+      ["Reklamen – Baubewilligung", "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren/reklamen"],
+      ["Werben im öffentlichen Raum", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/informieren-werben-und-plakatieren-im-oeffentlichen-raum"]
+    ]
+  },
+  {
+    id: "oeffnungszeiten",
+    title: "Öffnungszeiten und Sonntagsverkauf",
+    teaser: "Wann der Laden offen sein darf, und die zwei freien Advents-Sonntage.",
+    branchen: ["Detailhandel"],
+    keys: "öffnungszeiten ladenöffnung sonntag sonntagsverkauf abendverkauf samstag feiertag advent laden geschäft",
+    answer: "Mo–Fr 06:00–20:00, Samstag und vor Feiertagen 06:00–18:00. Sonntags ist grundsätzlich zu – ausser zwei Advents-Sonntage (13–18 Uhr) und Sonderfälle mit Bewilligung.",
+    steps: [
+      ["Normale Zeiten", "Mo–Fr 06–20 Uhr, Sa und Vorabend von Feiertagen 06–18 Uhr. Läden in Bahnhöfen: täglich 06–22 Uhr."],
+      ["Ausnahmen ohne Bewilligung", "Bäckereien, Blumenläden, reine Familienbetriebe und Bahnhofsläden haben Sonderregeln."],
+      ["Advents-Sonntage", "Zwei pro Jahr, 13–18 Uhr, ohne Bewilligung, Personal erlaubt (keine Jugendlichen unter 18). Daten stehen jeweils im Kantonsblatt."],
+      ["Alles andere", "Ausnahmebewilligung beim Amt für Wirtschaft und Arbeit, nur bei besonderem Bedarf."]
+    ],
+    facts: [
+      ["Rechtsgrundlage", "Ruhetags- und Ladenöffnungsgesetz (RLG, SG 811.100)"],
+      ["Zuständig", "Amt für Wirtschaft und Arbeit"]
+    ],
+    links: [
+      ["Ruhetags- und Ladenöffnungszeiten (bs.ch)", "https://www.bs.ch/wsu/awa/arbeitsbeziehungen/bewilligungen-informationen-fuer-unternehmen/ruhetags-und-ladenoeffnungszeiten"]
+    ]
+  },
+  {
+    id: "foodtruck",
+    title: "Foodtruck oder Verkaufsstand",
+    teaser: "Bewerbung pro Standort, dann Bau- und Nutzungsgesuch.",
+    branchen: ["Gastro", "Detailhandel"],
+    keys: "foodtruck food truck verkaufsstand stand marktstand markt buvette glace ape foodbike saison",
+    answer: "Feste Standorte werden ausgeschrieben: Du bewirbst dich mit Konzept, wirst ausgewählt und stellst dann ein Bau- und Nutzungsgesuch. Bis zur Bewilligung kann es 3 Monate dauern.",
+    steps: [
+      ["Bewerben", "Betriebs-/Gastrokonzept und Bewerbungsformular. Pro Bewerbung wird nur ein Standort vergeben."],
+      ["Bau- und Nutzungsgesuch", "Nach der Auswahl. Dauer bis 3 Monate."],
+      ["Ggf. Gastro-Bewilligung", "Wenn vor Ort gegessen wird, je nach Umfang Betriebsbewilligung nötig."],
+      ["Märkte und Events", "Läuft separat über die Regeln für Messen und Märkte."]
+    ],
+    facts: [
+      ["Kosten", "Feste Stände bis 12 m²: ca. <span class='mono'>CHF 3'700</span>/Jahr (Zone II −25 %). Saisonal kann abweichen."],
+      ["Dauer der Bewilligung", "Pro Saison, Nutzungsrecht 5 Jahre, max. 10 Jahre"],
+      ["Zuständig", `${ALLMEND.name}, <span class="mono">${ALLMEND.tel}</span>`]
+    ],
+    links: [
+      ["Verkaufen & Bewirten (bs.ch)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/verkaufen-bewirten"],
+      ["Leitfaden mobile Gastronomie (PDF)", "https://media.bs.ch/original_file/a602fd0afa338eb0adb4dbe34f64a7a17594bbf1/leitfaden-mobile-saisonale-gastronomie.pdf"]
+    ]
+  },
+  {
+    id: "lebensmittel-melden",
+    title: "Mit Lebensmitteln arbeiten: Betrieb melden",
+    teaser: "Gilt auch für Lager, Transport, Import – und Tattoo-Studios.",
+    branchen: ["Gastro", "Detailhandel"],
+    keys: "lebensmittel kantonslabor meldepflicht hygiene selbstkontrolle bäckerei metzgerei laden import catering tattoo",
+    answer: "Wer mit Lebensmitteln arbeitet (verkaufen, herstellen, lagern, transportieren), muss den Betrieb beim Kantonalen Laboratorium melden. Änderungen innert 14 Tagen.",
+    steps: [
+      ["Formular holen", "Meldeformular für Lebensmittelbetriebe, gratis."],
+      ["Selbstkontrollkonzept beilegen", "Dazu Produktionsmengen und Verkaufskanäle."],
+      ["Einsenden", "Kantonales Laboratorium Basel-Stadt, Kannenfeldstrasse 2, 4056 Basel."],
+      ["Änderungen melden", "Wesentliche Änderungen und Schliessung innert 14 Tagen."]
+    ],
+    facts: [
+      ["Kosten", "Meldung gratis"],
+      ["Zuständig", "Kantonales Laboratorium, Lebensmittelinspektorat"]
+    ],
+    links: [
+      ["Formulare und Merkblätter Kantonslabor", "https://www.bs.ch/gd/kantonslabor/formulare-und-merkblaetter"],
+      ["Lebensmittelsicherheit (bs.ch)", "https://www.bs.ch/gd/kantonslabor/im-fokus/lebensmittelsicherheit"]
+    ]
+  },
+  {
+    id: "firma-gruenden",
+    title: "Firma gründen oder nach Basel ziehen",
+    teaser: "Handelsregister, Bürgschaften, und wen du zuerst anrufst.",
+    branchen: ["Gastro", "Handwerk & Bau", "Detailhandel"],
+    keys: "gründen gründung firma handelsregister gmbh ag einzelfirma selbständig startup kredit bürgschaft umzug",
+    answer: "Ruf zuerst den Kontaktpunkt für Unternehmen an – er sagt dir, welche Ämter du brauchst. Eintragen lässt du dich beim Handelsregisteramt.",
+    steps: [
+      ["Kontaktpunkt anrufen", "Zentrale Anlaufstelle des Kantons für alle Fragen an die Verwaltung."],
+      ["Firmennamen prüfen", "Vorprüfung beim Handelsregisteramt empfohlen."],
+      ["Anmelden", "Universal-Anmeldeformulare gratis auf der Seite des Handelsregisteramts."],
+      ["Finanzierung", "Der Kanton unterstützt Bürgschaftsgenossenschaften (BG Mitte, BG SAFFA für Unternehmerinnen). Sie bürgen für Bankkredite."]
+    ],
+    facts: [
+      ["Kosten", "Namens-Vorprüfung <span class='mono'>CHF 50</span> · Anmeldeformular erstellen lassen <span class='mono'>CHF 60</span>"],
+      ["Zuständig", `${KONTAKTPUNKT.name}<br><span class="mono">${KONTAKTPUNKT.tel}</span> · <span class="mono">${KONTAKTPUNKT.mail}</span>`]
+    ],
+    links: [
+      ["Kontaktpunkt für Unternehmen", KONTAKTPUNKT.url],
+      ["Handelsregisteramt", "https://www.bs.ch/jsd/zentraler-rechtsdienst/handelsregisteramt"],
+      ["Unterstützung von Unternehmen", "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/firmenunterstuetzung"]
+    ]
+  }
+];
+
+const $ = (s) => document.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const norm = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+let branche = "Alle";
+try { branche = localStorage.getItem("kmu-branche") || "Alle"; } catch (e) {}
+if (!BRANCHEN.includes(branche)) branche = "Alle";
+
+function renderChips() {
+  $("#chips").innerHTML = BRANCHEN.map((b) =>
+    `<button type="button" class="chip" aria-pressed="${b === branche}" data-b="${esc(b)}">${esc(b)}</button>`).join("");
+}
+$("#chips").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-b]"); if (!b) return;
+  branche = b.dataset.b;
+  try { localStorage.setItem("kmu-branche", branche); } catch (e) {}
+  renderChips();
+  if (location.hash) location.hash = ""; else renderHome();
+});
+
+function matches(s, q) {
+  if (branche !== "Alle" && !s.branchen.includes(branche)) return false;
+  if (!q) return true;
+  const hay = norm([s.title, s.teaser, s.keys, s.answer].join(" "));
+  return norm(q).split(/\s+/).filter(Boolean).every((w) => hay.includes(w));
+}
+
+function card(s) {
+  return `<a class="card${s.featured ? " featured" : ""}" href="#${s.id}">
+    ${s.featured ? '<span class="eyebrow">Meistgefragt</span>' : ""}
+    <h3>${esc(s.title)}</h3>
+    <p>${esc(s.teaser)}</p>
+    <div class="tags">${s.branchen.map((b) => `<span class="tag">${esc(b)}</span>`).join("")}</div>
+  </a>`;
+}
+
+function helpBand() {
+  return `<section class="help" aria-label="Hilfe">
+    <div><h2>Nicht gefunden, was du suchst?</h2>
+    <p>Der Kontaktpunkt für Unternehmen des Kantons sagt dir, welches Amt zuständig ist.</p></div>
+    <div class="contact">${KONTAKTPUNKT.tel}<br>${KONTAKTPUNKT.mail}</div>
+  </section>`;
+}
+
+function renderHome() {
+  const q = $("#q").value.trim();
+  const list = S.filter((s) => matches(s, q));
+  const label = q ? `${list.length} Treffer für «${esc(q)}»` : (branche === "Alle" ? "Häufige Situationen" : `Situationen für ${esc(branche)}`);
+  $("#view").innerHTML = `
+    <section>
+      <p class="section-label">${label}</p>
+      ${list.length ? `<div class="grid">${list.map(card).join("")}</div>`
+        : `<div class="empty"><strong>Dazu haben wir noch nichts.</strong> Versuch ein anderes Wort, z.B. «parkieren», «Schild» oder «Mulde» – oder frag den Kontaktpunkt (unten).</div>`}
+    </section>
+    ${helpBand()}`;
+}
+
+function renderDetail(s) {
+  const rules = s.rules ? `<div class="rules">
+      <div class="ok"><h3>✓ Erlaubt</h3><ul>${s.rules.ok.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></div>
+      <div class="no"><h3>✕ Nicht erlaubt</h3><ul>${s.rules.no.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></div>
+    </div>` : "";
+  $("#view").innerHTML = `
+    <a class="back" href="#">← Alle Situationen</a>
+    <article class="detail">
+      <header>
+        <div class="tags">${s.branchen.map((b) => `<span class="tag">${esc(b)}</span>`).join("")}</div>
+        <h2>${esc(s.title)}</h2>
+        <p class="answer">${esc(s.answer)}</p>
+      </header>
+      ${rules}
+      <div class="cols">
+        <section class="box"><h3>So gehst du vor</h3>
+          <ol class="steps">${s.steps.map(([t, d]) => `<li><div><b>${esc(t)}</b><span>${esc(d)}</span></div></li>`).join("")}</ol>
+        </section>
+        <div style="display:grid;gap:1.25rem;min-width:0">
+          <section class="box"><h3>Auf einen Blick</h3>
+            <dl class="facts">${s.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>
+            ${s.conflict ? `<div class="conflict"><strong>Achtung:</strong> ${esc(s.conflict)}</div>` : ""}
+          </section>
+          <section class="box"><h3>Offizielle Seiten</h3>
+            <ul class="links">${s.links.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul>
+            <p class="stand">Zusammengefasst am ${STAND}. Verbindlich ist die offizielle Seite.</p>
+          </section>
+        </div>
+      </div>
+    </article>
+    ${helpBand()}`;
+  window.scrollTo(0, 0);
+}
+
+function route() {
+  const id = location.hash.slice(1);
+  const s = S.find((x) => x.id === id);
+  if (s) renderDetail(s); else renderHome();
+}
+
+$("#q").addEventListener("input", () => { if (location.hash) history.replaceState(null, "", location.pathname + location.search); renderHome(); });
+$("#searchForm").addEventListener("submit", (e) => e.preventDefault());
+window.addEventListener("hashchange", route);
+renderChips();
+route();
+</script>
+</body>
+</html>
