@@ -155,6 +155,19 @@ main .wrap { padding-block: 1.75rem 3rem; display: grid; gap: 1.75rem; }
 .links a::after { content: " ↗"; }
 .stand { font-size: .85rem; color: var(--muted); }
 
+/* Formulare */
+.forms { display: grid; gap: .6rem; }
+.forms h3 { font-size: 1.05rem; }
+.form-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+.fbtn {
+  display: inline-flex; flex-direction: column; gap: .1rem; text-decoration: none;
+  background: var(--accent); color: var(--accent-ink); border-radius: 8px; padding: .7rem 1rem; font-weight: 600; max-width: 100%;
+}
+.fbtn small { font-weight: 400; font-size: .8rem; opacity: .85; }
+.fbtn.page { background: var(--surface); color: var(--accent); border: 1.5px solid var(--accent); }
+.fbtn:hover { filter: brightness(1.08); }
+.verdict .fbtn { margin-top: .25rem; }
+
 /* Notfall */
 .sos { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between;
   background: var(--no-bg); border: 2px solid var(--no); border-radius: 12px; padding: 1rem 1.2rem; color: var(--fg); text-decoration: none; }
@@ -484,7 +497,7 @@ const S = [
       ["Warenauslage", "Ebenfalls Gesuch bei der Allmendverwaltung."]
     ],
     facts: [
-      ["Kosten", "Reklamereiter ca. <span class='mono'>CHF 500</span> pro m² und Jahr"],
+      ["Kosten", "Reklamereiter ca. <span class='mono'>CHF 375–500</span> pro m² und Jahr, plus einmalig <span class='mono'>CHF 100</span>"],
       ["Zuständig", `Schild: Bau- und Gastgewerbeinspektorat<br>Trottoir: ${ALLMEND.name}, <span class="mono">${ALLMEND.tel}</span>`]
     ],
     links: [
@@ -583,6 +596,46 @@ const S = [
   }
 ];
 
+/* Formulare: [Name, URL, Art]. Art: "online" = Online-Formular, "pdf" = PDF zum Ausfüllen,
+   "seite" = direkter Formular-Link nicht gefunden, Link auf die Seite mit dem Formular. */
+const F = {
+  meldung: ["Meldeformular «Meldepflichtige Bauten und Anlagen»", "https://formulare.bs.ch/bgi/meldepflichtige-bauten-und-anlagen?ekonto=optional", "online"],
+  baubegehren: ["Online-Baubegehren", "https://jaxforms.cloud.bs.ch/formservice/services/rest/template/public/KTBS/de/index.html", "online"],
+  baupapier: ["Formular «Baubewilligungspflichtige Bauten und Anlagen» (Papier)", "https://media.bs.ch/original_file/8fa9a33c509f7e772095a93c4c23915c43677683/170-101-baubewilligungspflichtige-bauten-neu.pdf", "pdf"],
+  kleinst: ["Meldung Kleinstnutzung Allmend (bis 10 m², 20 Tage)", "https://formulare.bs.ch/tiefbauamt/kleinstnutzung-oeffentlicher-grund?ekonto=optional", "online"],
+  bauinst: ["Gesuch Bauinstallation auf Allmend (Mulde, Gerüst …)", "https://formulare.bs.ch/tiefbauamt/temporaere-bauliche-nutzung-oeffentlichem-grund", "online"],
+  zufahrt: ["Zufahrtsbewilligung Innenstadt", "https://formulare.bs.ch/mfk/zufahrtsbewilligung", "online"],
+  gpk: ["Gesuch Gewerbeparkkarte", "https://media.bs.ch/original_file/4b3b8206469c875075453238a6ed1e989c012a0a/mfk-gesuch-gewerbeparkkarte-2024.pdf", "pdf"],
+  gpkOnline: ["Gewerbeparkkarte online beantragen", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/gewerbeparkkarte", "seite"],
+  gastroNeu: ["Gesuch Betriebsbewilligung (neu / Wechsel)", "https://media.bs.ch/original_file/5bdf0f434783c6cc03f3b84e530a2cf45ad13e0a/170-201-erteilung-betriebsbewilligung-0.pdf", "pdf"],
+  gastroAend: ["Änderung Betriebsbewilligung", "https://media.bs.ch/original_file/53cfe0bba06f99d31eaaa1cf52ed13da95b9beaa/170-202-aenderung-betriebsbewilligung-0.pdf", "pdf"],
+  lebensmittel: ["Meldeformular Lebensmittelbetrieb", "https://media.bs.ch/original_file/5c198f1d428ac66048652b600ff5fa2eb82e61b6/klbs-210107-meldeformular-fuer-lebensmittelbetriebe-tatoostu.pdf", "pdf"],
+  allmendGesuche: ["Gesuche öffentlicher Raum (Boulevard, Reklamereiter, Auslage)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/gesuche-zur-nutzung-des-oeffentlichen-raums", "seite"],
+  foodtruck: ["Bewerbungsformular Verkaufsstand", "https://www.tiefbauamt.bs.ch/oeffentlicher-raum/nutzung-des-oeffentlichen-raumes/kommerzielle-nutzungen/buvetten-und-verkaufsstaende.html", "seite"],
+  familie: ["Bewilligungsgesuch Familienbetriebe", "https://www.bs.ch/wsu/awa/arbeitsbeziehungen/bewilligungen-informationen-fuer-unternehmen/ruhetags-und-ladenoeffnungszeiten", "seite"],
+  hr: ["Handelsregister-Formulare", "https://www.bs.ch/jsd/zentraler-rechtsdienst/handelsregisteramt", "seite"]
+};
+const FORMS = {
+  gewerbeparkkarte: [F.gpkOnline, F.gpk],
+  "zufahrt-innenstadt": [F.zufahrt],
+  notfall: [F.zufahrt],
+  "restaurant-eroeffnen": [F.gastroNeu, F.gastroAend, F.lebensmittel, F.baubegehren],
+  boulevard: [F.baubegehren, F.allmendGesuche],
+  "mulde-geruest": [F.kleinst, F.bauinst],
+  reklame: [F.baupapier, F.allmendGesuche],
+  oeffnungszeiten: [F.familie],
+  foodtruck: [F.foodtruck],
+  "lebensmittel-melden": [F.lebensmittel],
+  "firma-gruenden": [F.hr],
+  baubewilligung: [F.meldung, F.baubegehren, F.baupapier]
+};
+const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allmend: [F.kleinst, F.bauinst] };
+const LABEL = { online: "Online-Formular", pdf: "PDF-Formular", seite: "Formular auf dieser Seite" };
+function formBtns(list) {
+  return `<div class="form-btns">${list.map(([t, u, k]) =>
+    `<a class="fbtn${k === "seite" ? " page" : ""}" href="${u}" target="_blank" rel="noopener">${t} ↗<small>${LABEL[k]}</small></a>`).join("")}</div>`;
+}
+
 const $ = (s) => document.querySelector(s);
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const norm = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -680,6 +733,7 @@ function renderBau(b) {
         <div class="big">${esc(V.big)}</div>
         <p>${esc(V.txt)}</p>
         ${V.list ? `<ul>${V.list.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>` : ""}
+        ${VERDICT_FORMS[level] ? formBtns(level === "bewilligung" && b.id === "leuchtreklame" ? [F.baubegehren, F.baupapier] : VERDICT_FORMS[level]) : ""}
         ${b.note ? `<p><strong>Gut zu wissen:</strong> ${esc(b.note)}</p>` : ""}
         <p><strong>Fragen?</strong> ${contact}</p>
         ${b.see ? `<p><a href="#${b.see}">Mehr dazu: ${esc(S.find((s) => s.id === b.see).title)} →</a></p>` : ""}
@@ -726,6 +780,7 @@ function renderDetail(s) {
         <h2>${esc(s.title)}</h2>
         <p class="answer">${esc(s.answer)}</p>
       </header>
+      ${FORMS[s.id] ? `<section class="box forms"><h3>Formulare</h3>${formBtns(FORMS[s.id])}</section>` : ""}
       ${rules}
       ${s.sos ? `<div class="callout">${s.sos.map(([n, t]) => `<div><span class="num">${esc(n)}</span><span>${esc(t)}</span></div>`).join("")}</div>` : ""}
       ${s.ladder ? `<div class="ladder">
