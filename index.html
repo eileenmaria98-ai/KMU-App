@@ -672,12 +672,20 @@ const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allme
 
 /* Fristen: [Kurzwert, Erklärung]. Der erste Eintrag erscheint auch auf der Karte. */
 const FRISTEN = {
-  gewerbeparkkarte: [["3–5 Arbeitstage", "Gewerbeparkkarte"]],
-  "restaurant-eroeffnen": [["ca. 1 Monat", "Betriebsbewilligung, ab vollständigen Unterlagen"]],
+  gewerbeparkkarte: [["3–5 Arbeitstage", "Bearbeitung des Antrags"]],
+  "restaurant-eroeffnen": [["ca. 1 Monat", "Ab vollständigen Unterlagen"]],
   boulevard: [["ca. 3 Monate", "Nutzungsbewilligung der Allmendverwaltung, ab Gesuch"]],
-  "mulde-geruest": [["5 Arbeitstage", "Meldung Kleinstnutzung: kommt innert 5 Arbeitstagen kein Einwand, ist sie gültig"]],
+  "mulde-geruest": [["5 Arbeitstage", "Gültig, wenn innert 5 Arbeitstagen kein Einwand kommt"]],
   foodtruck: [["bis 3 Monate", "Bau- und Nutzungsbewilligung nach der Zusage"]],
-  baubewilligung: [["ca. 2 Wochen", "Meldeverfahren: Bestätigung durch das BGI"]]
+  baubewilligung: [["ca. 2 Wochen", "Bestätigung durch das BGI"]]
+};
+const FRIST_NAME = {
+  gewerbeparkkarte: "Gewerbeparkkarte",
+  "restaurant-eroeffnen": "Betriebsbewilligung Gastro",
+  boulevard: "Boulevard",
+  "mulde-geruest": "Kleinstnutzung Allmend",
+  foodtruck: "Foodtruck / Verkaufsstand",
+  baubewilligung: "Meldeverfahren Bau"
 };
 function fristenBox(list) {
   return `<section class="fristen" aria-label="Frist bis zur Bewilligung"><h3>Frist bis zur Bewilligung</h3><ul>${list.map(([k, t]) =>
@@ -728,12 +736,12 @@ function card(s) {
 
 function renderFristen() {
   const rows = S.filter((s) => FRISTEN[s.id]).map((s) => FRISTEN[s.id].map(([k, t], i) =>
-    `<tr>${i === 0 ? `<th scope="rowgroup" rowspan="${FRISTEN[s.id].length}"><a href="#${s.id}">${esc(s.title)}</a></th>` : ""}<td class="mono">${esc(k)}</td><td>${esc(t)}</td></tr>`).join("")).join("");
+    `<tr>${i === 0 ? `<th scope="rowgroup" rowspan="${FRISTEN[s.id].length}"><a href="#${s.id}">${esc(FRIST_NAME[s.id] || s.title)}</a></th>` : ""}<td class="mono">${esc(k)}</td><td>${esc(t)}</td></tr>`).join("")).join("");
   $("#view").innerHTML = `
     <a class="back" href="#">← Startseite</a>
     <section class="detail"><header><h2>Wie lange bis zur Bewilligung?</h2>
       <p class="answer">So lange brauchen die Ämter, bis du die Bewilligung hast. Plane diese Zeit ein.</p></header>
-      <div class="table-wrap"><table class="ftable"><thead><tr><th>Situation</th><th>Frist</th><th>Bewilligung</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="table-wrap"><table class="ftable"><thead><tr><th>Bewilligung</th><th>Frist</th><th>Hinweis</th></tr></thead><tbody>${rows}</tbody></table></div>
       <p class="stand">Zusammengefasst am ${STAND}. Verbindlich sind die offiziellen Seiten.</p>
     </section>
     ${helpBand()}`;
