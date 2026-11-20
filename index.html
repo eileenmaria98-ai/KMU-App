@@ -339,7 +339,7 @@ const KONTAKTPUNKT = {
   mail: "business@bs.ch",
   url: "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/unterstuetzung-von-unternehmen/kontaktpunkt-fuer-unternehmen"
 };
-const ALLMEND = { name: "Allmendverwaltung, Tiefbauamt", adr: "Dufourstrasse 50, 4051 Basel", tel: "+41 61 267 93 57" };
+const ALLMEND = { name: "Allmendverwaltung, Tiefbauamt", adr: "Dufourstrasse 40/50, 4052 Basel", tel: "+41 61 267 93 57" };
 const BGI = { name: "Bau- und Gastgewerbeinspektorat, Abt. Gastgewerbebewilligungen", tel: "+41 61 267 70 26", mail: "bvdbgi@bs.ch" };
 const BGI_BAU = { name: "Bau- und Gastgewerbeinspektorat (BGI)", adr: "Münsterplatz 11, 4001 Basel", tel: "+41 61 267 92 00", mail: "bvdbgi@bs.ch" };
 
@@ -472,10 +472,11 @@ const S = [
       ["Frist", "Ansprüche verjähren in der Regel 10 Jahre nach Beginn der Immissionen"],
       ["Grundlage", "Infoblatt «Entschädigungsansprüche bei Bauprojekten des Kantons», Stand September 2025"]
     ],
-    conflict: "Laut einer Zusammenfassung des Infoblatts zahlt der Kanton keine Entschädigung für Bauarbeiten auf Allmend – was das genau heisst, ist unklar. Ein Unterstützungsfonds für baustellengeplagte Betriebe (Motion 25.5394) ist politisch hängig; die Regierung lehnt ihn ab.",
+    conflict: "Auf der Projektseite zur Clarastrasse schreibt der Kanton, dass er keine Entschädigungen für Bauarbeiten auf Allmend zahlt. Das Infoblatt lässt Ansprüche nur bei übermässigen Auswirkungen zu. Rechne also mit einer hohen Hürde. Ein Unterstützungsfonds für baustellengeplagte Betriebe (Motion 25.5394) ist politisch hängig; die Regierung lehnt ihn ab.",
     links: [
       ["Infoblatt Entschädigungsansprüche (PDF)", "https://media.bs.ch/original_file/e2ee2b9fcc9e7a0e8ff325ea1e61fe827883e5a2/infoblatt-entschaedigungsansprueche-bei-bauprojekten-des-kan.pdf"],
       ["Baustellen Strassen & Gewässer (bs.ch)", "https://www.bs.ch/bvd/tiefbauamt/baustellen"],
+      ["Beispiel Projektseite Clarastrasse", "https://www.bs.ch/bauprojekte/tiefbauprojekte/erneuerung-clarastrasse"],
       ["Gewerbeverband: Neues Infoblatt", "https://gewerbe-basel.ch/entschaedigungsansprueche-neues-infoblatt/"]
     ]
   },
@@ -490,7 +491,7 @@ const S = [
     steps: [
       ["Bau-Check machen", "Wähle oben, was du planst. Du siehst sofort, welche Stufe gilt."],
       ["Schutzzone klären", "Steht das Gebäude in einer Schutzzone oder ist es ein Denkmal, gelten strengere Regeln. Im Zweifel beim BGI fragen."],
-      ["Melden oder Baubegehren einreichen", "Meldung: Formular, mindestens 2 Wochen vor Arbeitsbeginn. Baubegehren: online, das Verfahren läuft seit 2026 digital."],
+      ["Melden oder Baubegehren einreichen", "Meldung: Formular, mindestens 2 Wochen vor Arbeitsbeginn. Baubegehren: online. Ab 1.1.2027 geht es nur noch digital."],
       ["Erst dann loslegen", "Bei Bewilligungspflicht erst bauen, wenn der Entscheid da ist. Nachbarn können Einsprache erheben."]
     ],
     facts: [
@@ -516,7 +517,6 @@ const S = [
       ["Kosten", "Kurzbewilligung <span class='mono'>CHF 20</span> · mit Kundenkonto <span class='mono'>CHF 5</span> · Dauerbewilligung <span class='mono'>CHF 100</span> (für ansässige Betriebe mit verderblicher Ware ohne eigenen Parkplatz gratis, max. 12 Monate)"],
       ["Wer stellt aus", "Motorfahrzeugkontrolle der Kantonspolizei"]
     ],
-    conflict: "Die Gesetzessammlung zeigt teils noch eine ältere Fassung (Mo–Fr 06–11 Uhr). Die aktuelle Seite des Kantons nennt Mo–Sa 05–11 Uhr.",
     links: [
       ["Zufahrt Innenstadt (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt"],
       ["Zufahrtsbewilligung Kernzone", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt/zufahrtsbewilligung-zur-kernzone-innenstadt"]
@@ -560,14 +560,14 @@ const S = [
       ["Auflagen einhalten", "Nachtruhe ab 23 Uhr, keine Beschallung, keine Zäune, Sichtschutzwände oder Zelte."]
     ],
     facts: [
-      ["Kosten", "ca. <span class='mono'>CHF 80–88</span> pro m² und Jahr (Zone I) · Zone II 25 % günstiger"],
+      ["Kosten", "<span class='mono'>CHF 80</span> pro m² und Jahr (Zone I) · Zone II 25 % günstiger"],
       ["Dauer", "In der Regel 3 Monate ab Gesuch"],
       ["Zuständig", `${ALLMEND.name}<br>${ALLMEND.adr}<br><span class="mono">${ALLMEND.tel}</span>`]
     ],
-    conflict: "Zwei Seiten nennen unterschiedliche Preise (CHF 80 und CHF 88 pro m²). Vor dem Budgetieren bei der Allmendverwaltung nachfragen.",
     links: [
       ["Verkaufen & Bewirten (bs.ch)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/verkaufen-bewirten"],
       ["Aussenbewirtung – Baubewilligung", "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren/aussenbewirtung"],
+      ["Gebührenverordnung öffentlicher Raum (SG 724.910)", "https://www.gesetzessammlung.bs.ch/app/de/texts_of_law/724.910"],
       ["Allgemeine Auflagen (PDF)", "https://media.bs.ch/original_file/c05b8b60bc3c3250a4da59bf086e11fe3579888d/allgemeine-auflagen-fuer-boulevard-restaurants.pdf"]
     ]
   },
@@ -584,10 +584,9 @@ const S = [
       ["Richtig aufstellen", "Innerhalb der Parkfeld-Markierung, abgeschrankt, nachts beleuchtet, Mulden auf Holz. Du haftest für Schäden."]
     ],
     facts: [
-      ["Kosten", "Je nach Fläche und Dauer, ca. <span class='mono'>CHF 0.15–0.30</span> pro m² und Tag plus Bewilligungsgebühr"],
+      ["Kosten", "Meldung bis 10 m² und 20 Tage: erstmalig gratis. Grössere Installationen: Gebühr nach Gebührenverordnung öffentlicher Raum (SG 724.910) – Betrag vorher bei der Allmendverwaltung erfragen"],
       ["Zuständig", `${ALLMEND.name}<br><span class="mono">${ALLMEND.tel}</span>`]
     ],
-    conflict: "Die Gebührentabelle im Formular ist älter als die aktuelle Richtlinie. Gebühren vorher bestätigen lassen.",
     links: [
       ["Bauen & Installieren im öffentlichen Raum", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/bauen-installieren-im-oeffentlichen-raum"],
       ["Richtlinie Bauinstallationen (PDF)", "https://media.bs.ch/original_file/8dc84ecf536caaab543629406546d63aabdc9ec3/richtlinie-bauinstallationen-4.pdf"]
@@ -606,12 +605,13 @@ const S = [
       ["Warenauslage", "Ebenfalls Gesuch bei der Allmendverwaltung."]
     ],
     facts: [
-      ["Kosten", "Reklamereiter ca. <span class='mono'>CHF 375–500</span> pro m² und Jahr, plus einmalig <span class='mono'>CHF 100</span>"],
+      ["Kosten", "Reklamereiter <span class='mono'>CHF 500</span> pro m² und Jahr · Warenauslage <span class='mono'>CHF 375</span> pro m² und Jahr · plus Bewilligungsgebühr <span class='mono'>CHF 100–1'500</span>, je nach Aufwand"],
       ["Zuständig", `Schild: Bau- und Gastgewerbeinspektorat<br>Trottoir: ${ALLMEND.name}, <span class="mono">${ALLMEND.tel}</span>`]
     ],
     links: [
       ["Reklamen – Baubewilligung", "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren/reklamen"],
-      ["Werben im öffentlichen Raum", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/informieren-werben-und-plakatieren-im-oeffentlichen-raum"]
+      ["Werben im öffentlichen Raum", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/informieren-werben-und-plakatieren-im-oeffentlichen-raum"],
+      ["Gebührenverordnung öffentlicher Raum (SG 724.910)", "https://www.gesetzessammlung.bs.ch/app/de/texts_of_law/724.910"]
     ]
   },
   {
@@ -777,12 +777,12 @@ const AEMTER = [
     url: "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/unterstuetzung-von-unternehmen/kontaktpunkt-fuer-unternehmen" },
   { name: "Bau- und Gastgewerbeinspektorat", sub: "Baubewilligungen und Meldeverfahren", wofuer: "Baubewilligung, Meldeverfahren, Firmenschild, Umbau",
     adr: "Münsterplatz 11, 4001 Basel", tel: "+41 61 267 92 00", telZeit: "täglich 9.00–11.00 und 14.00–16.00", mail: "bvdbgi@bs.ch",
-    schalter: "Vorher anrufen – die Angaben zum Schalter widersprechen sich", url: "https://www.bs.ch/bvd/bgi/abteilungen-des-bgi" },
+    schalter: "Kein Schalter ohne Anmeldung mehr – Beratungstermin online buchen", url: "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren" },
   { name: "Bau- und Gastgewerbeinspektorat", sub: "Gastgewerbebewilligungen", wofuer: "Betriebsbewilligung für Restaurant, Café, Bar",
     adr: "Münsterplatz 11, 4001 Basel", tel: "+41 61 267 70 26", telZeit: "täglich 8.00–12.00 und 14.00–16.00", mail: "bvdbgi@bs.ch",
     url: "https://www.bs.ch/bvd/bgi/gastgewerbebewilligungen/restaurationsbetrieb" },
   { name: "Allmendverwaltung", sub: "Tiefbauamt", wofuer: "Boulevard, Mulde, Gerüst, Reklamereiter, Verkaufsstand",
-    adr: "Dufourstrasse 50, 4001 Basel", tel: "+41 61 267 93 57", telZeit: "Mo–Fr 9.00–12.00 und 13.30–16.00", mail: "bvdav@bs.ch",
+    adr: "Dufourstrasse 40/50, 4052 Basel", tel: "+41 61 267 93 57", telZeit: "Mo–Fr 9.00–12.00 und 13.30–16.00", mail: "bvdav@bs.ch",
     schalter: "Kein Schalter angegeben – vorher anrufen", url: "https://www.bs.ch/bvd/tiefbauamt/abteilungen-des-tiefbauamts" },
   { name: "Motorfahrzeugkontrolle", sub: "Kantonspolizei", wofuer: "Gewerbeparkkarte, Zufahrt Innenstadt",
     adr: "Clarastrasse 38, 4058 Basel", tel: "+41 61 208 00 60", telZeit: "Mo–Fr 9.00–11.00 und 14.00–16.00", mail: "fahrzeuge@jsd.bs.ch",
