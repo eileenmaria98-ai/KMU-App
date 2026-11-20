@@ -168,6 +168,23 @@ main .wrap { padding-block: 1.75rem 3rem; display: grid; gap: 1.75rem; }
 .fbtn:hover { filter: brightness(1.08); }
 .verdict .fbtn { margin-top: .25rem; }
 
+/* Fristen */
+.fristen { background: var(--warn-bg); color: var(--warn-fg); border-radius: 10px; padding: 1rem 1.15rem; display: grid; gap: .6rem; }
+.fristen h3 { font-size: 1.05rem; }
+.fristen ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.fristen li { display: grid; grid-template-columns: minmax(8.5rem, auto) 1fr; gap: .75rem; align-items: baseline; }
+.fristen li b { font: 700 1rem var(--f-mono); font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) { .fristen li { grid-template-columns: 1fr; gap: .1rem; } }
+.frist-pill { justify-self: start; font: 600 .78rem var(--f-body); padding: .2rem .55rem; border-radius: 4px; background: var(--warn-bg); color: var(--warn-fg); }
+.fristen-link { background: var(--warn-bg); border-color: var(--mark); }
+.fristen-link b, .fristen-link .go { color: var(--warn-fg); }
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.ftable { width: 100%; border-collapse: collapse; min-width: 560px; font-size: .95rem; }
+.ftable th, .ftable td { text-align: left; vertical-align: top; padding: .65rem .8rem; border-bottom: 1px solid var(--line); }
+.ftable thead th { font: 600 .74rem var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.ftable tbody th { font-weight: 600; width: 32%; }
+.ftable td.mono { white-space: nowrap; font-weight: 600; }
+
 /* Notfall */
 .sos { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between;
   background: var(--no-bg); border: 2px solid var(--no); border-radius: 12px; padding: 1rem 1.2rem; color: var(--fg); text-decoration: none; }
@@ -659,6 +676,25 @@ const FORMS = {
   "baustelle-entschaedigung": [F.entsch]
 };
 const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allmend: [F.kleinst, F.bauinst] };
+
+/* Fristen: [Kurzwert, Erklärung]. Der erste Eintrag erscheint auch auf der Karte. */
+const FRISTEN = {
+  gewerbeparkkarte: [["3–5 Arbeitstage", "Bearbeitung des Antrags"], ["Wunschdatum", "Die Karte gilt ab dem Datum, das du im Formular angibst"]],
+  "zufahrt-innenstadt": [["Mo–Sa 05–11 Uhr", "In diesem Zeitfenster ist Liefern ohne Bewilligung erlaubt"], ["Vor der Fahrt", "Kurzbewilligung beantragen, wenn du ausserhalb des Zeitfensters fahren musst"]],
+  notfall: [["Sofort", "Leitungsschaden an IWB melden: 0800 400 800"], ["Vor der Fahrt", "Notfall-Zufahrt der Behörde melden – dann wird ohne Verzug bewilligt"]],
+  "restaurant-eroeffnen": [["ca. 1 Monat", "Entscheid über die Betriebsbewilligung, ab vollständigen Unterlagen"], ["Vor Eröffnung", "Ohne Bewilligung darfst du nicht eröffnen"], ["14 Tage", "Änderungen am Lebensmittelbetrieb ans Kantonslabor melden"]],
+  boulevard: [["ca. 3 Monate", "Entscheid über die Nutzungsbewilligung ab Gesuch – für den Sommer früh einreichen"], ["ab 23 Uhr", "Nachtruhe draussen"]],
+  "mulde-geruest": [["10 Arbeitstage vorher", "Meldung Kleinstnutzung (bis 10 m², max. 20 Tage). Kein Einwand innert 5 Arbeitstagen = ok"], ["2 Wochen vorher", "Gesuch für Mulde, Gerüst, Umschlagplatz"], ["3 Monate vorher", "Gesuch für Kran, Containerbühne"]],
+  oeffnungszeiten: [["Anfang Jahr", "Die zwei freien Advents-Sonntage stehen im Kantonsblatt"]],
+  foodtruck: [["bis 3 Monate", "Bau- und Nutzungsgesuch nach der Zusage"], ["Jährlich", "Bewilligung pro Saison neu beantragen"]],
+  "lebensmittel-melden": [["Vor dem Start", "Betrieb beim Kantonslabor melden"], ["14 Tage", "Änderungen und Schliessung melden"]],
+  "baustelle-entschaedigung": [["Ab Tag 1", "Umsatz, Fotos und Sperrungen dokumentieren"], ["3–6 Monate", "Kürzere Sperrungen führen in der Regel zu keiner Entschädigung"], ["10 Jahre", "Verjährung ab Beginn der Immissionen"]],
+  baubewilligung: [["2 Wochen vorher", "Meldung ans BGI vor Arbeitsbeginn; Prüfung meist innert 2 Wochen"], ["2 Monate vorher", "Zusätzlich an die Denkmalpflege, wenn Schutzzone oder Denkmal"], ["Vor Baubeginn", "Bei Baubewilligung erst bauen, wenn der Entscheid da ist"]]
+};
+function fristenBox(list) {
+  return `<section class="fristen" aria-label="Fristen"><h3>Fristen</h3><ul>${list.map(([k, t]) =>
+    `<li><b>${esc(k)}</b><span>${esc(t)}</span></li>`).join("")}</ul></section>`;
+}
 const LABEL = { online: "Online-Formular", pdf: "PDF-Formular", seite: "Formular auf dieser Seite", info: "Kein Formular vorhanden – Infoblatt (PDF)" };
 function formBtns(list) {
   return `<div class="form-btns">${list.map(([t, u, k]) =>
@@ -697,8 +733,23 @@ function card(s) {
     ${s.featured ? '<span class="eyebrow">Meistgefragt</span>' : ""}
     <h3>${esc(s.title)}</h3>
     <p>${esc(s.teaser)}</p>
+    ${FRISTEN[s.id] ? `<span class="frist-pill">Frist: ${esc(FRISTEN[s.id][0][0])}</span>` : ""}
     <div class="tags">${s.branchen.map((b) => `<span class="tag">${esc(b)}</span>`).join("")}</div>
   </a>`;
+}
+
+function renderFristen() {
+  const rows = S.filter((s) => FRISTEN[s.id]).map((s) => FRISTEN[s.id].map(([k, t], i) =>
+    `<tr>${i === 0 ? `<th scope="rowgroup" rowspan="${FRISTEN[s.id].length}"><a href="#${s.id}">${esc(s.title)}</a></th>` : ""}<td class="mono">${esc(k)}</td><td>${esc(t)}</td></tr>`).join("")).join("");
+  $("#view").innerHTML = `
+    <a class="back" href="#">← Startseite</a>
+    <section class="detail"><header><h2>Alle Fristen auf einen Blick</h2>
+      <p class="answer">Wie lange vorher du was einreichen musst und wie lange die Ämter brauchen.</p></header>
+      <div class="table-wrap"><table class="ftable"><thead><tr><th>Situation</th><th>Frist</th><th>Was</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="stand">Zusammengefasst am ${STAND}. Verbindlich sind die offiziellen Seiten.</p>
+    </section>
+    ${helpBand()}`;
+  window.scrollTo(0, 0);
 }
 
 function helpBand() {
@@ -788,6 +839,7 @@ function renderHome() {
   $("#view").innerHTML = `
     ${q ? "" : `<a class="sos" href="#notfall"><span><b>Notfall?</b> <span>Wasserrohrbruch, Leitung kaputt, sofort in die Innenstadt</span></span><span class="go">Was tun →</span></a>`}
     ${q ? "" : bauHero()}
+    ${q ? "" : `<a class="sos fristen-link" href="#fristen"><span><b>Alle Fristen</b> <span>Wie lange vorher muss ich was einreichen?</span></span><span class="go">Übersicht →</span></a>`}
     <section>
       <p class="section-label">${label}</p>
       ${list.length ? `<div class="grid">${list.map(card).join("")}</div>`
@@ -809,6 +861,7 @@ function renderDetail(s) {
         <h2>${esc(s.title)}</h2>
         <p class="answer">${esc(s.answer)}</p>
       </header>
+      ${FRISTEN[s.id] ? fristenBox(FRISTEN[s.id]) : ""}
       ${FORMS[s.id] ? `<section class="box forms"><h3>Formulare</h3>${formBtns(FORMS[s.id])}</section>` : ""}
       ${rules}
       ${s.sos ? `<div class="callout">${s.sos.map(([n, t]) => `<div><span class="num">${esc(n)}</span><span>${esc(t)}</span></div>`).join("")}</div>` : ""}
@@ -840,6 +893,7 @@ function renderDetail(s) {
 function route() {
   const id = location.hash.slice(1);
   if (id === "bau-check") return renderBauList();
+  if (id === "fristen") return renderFristen();
   if (id.startsWith("bau-")) {
     const b = BAU.find((x) => "bau-" + x.id === id);
     if (b) { schutzAnswer = null; return renderBau(b); }
