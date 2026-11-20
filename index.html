@@ -353,12 +353,12 @@ const BAU = [
     note: "Danach brauchst du zusätzlich die Nutzungsbewilligung der Allmendverwaltung.", see: "boulevard" },
   { id: "schild", g: "Schild & Werbung", label: "Firmenschild, unbeleuchtet", hint: "bis 0,5 m² pro Betrieb", ask: true, v: (s) => s ? "melden" : "frei" },
   { id: "leuchtreklame", g: "Schild & Werbung", label: "Leuchtreklame oder grosses Schild", hint: "beleuchtet oder über 0,5 m²", v: () => "bewilligung",
-    note: "Formular «Baubewilligungspflichtige Bauten und Anlagen» mit Anhang F.", see: "reklame" },
+    note: "Dafür stellst du ein Reklamebegehren über das Online-Baubegehren. Kleinere Reklamen werden im vereinfachten Verfahren geprüft.", see: "reklame" },
   { id: "solar", g: "Energie", label: "Solaranlage", hint: "auf Dach oder Fassade", ask: true, v: (s) => s ? "bewilligung" : "melden",
     note: "Das Meldeverfahren gilt nur in bestimmten Zonen und unter Bedingungen. Wenn unsicher: nachfragen." },
   { id: "wp-innen", g: "Energie", label: "Wärmepumpe, innen aufgestellt", hint: "Luft-Wasser", v: () => "frei" },
   { id: "wp-aussen", g: "Energie", label: "Wärmepumpe, aussen aufgestellt", hint: "Luft-Wasser, kleines Gerät", v: () => "melden",
-    note: "Grosse Aussengeräte brauchen eine Baubewilligung." },
+    note: "Meldeverfahren gilt im Vorgarten bis 100×160×70 cm (gut eingebettet) oder hinter der Baulinie bis 2 m³. Grössere Geräte brauchen eine Baubewilligung." },
   { id: "erdsonde", g: "Energie", label: "Erdsonde / Sole-Wärmepumpe", hint: "", v: () => "bewilligung" },
   { id: "fassade", g: "Gebäude & Gelände", label: "Fassade, Fenster, Dach erneuern", hint: "Unterhalt, gleich wie vorher", ask: true, v: (s) => s ? "melden" : "fragen",
     note: "In Schutzzone oder am Denkmal ist Unterhalt meldepflichtig. Ausserhalb ist er oft frei – kurz nachfragen." },
@@ -372,9 +372,9 @@ const QUICK = ["umbau", "umnutzung", "schild", "solar"];
 const VERDICT = {
   frei: { big: "Keine Baubewilligung nötig", txt: "Du brauchst weder eine Baubewilligung noch eine Meldung." },
   melden: { big: "Keine Baubewilligung – aber melden", txt: "Melde das Vorhaben mit dem Formular «Meldeverfahren» ans BGI.",
-    list: ["Mindestens 2 Wochen vor Arbeitsbeginn einreichen", "Gratis, Prüfung meist innert 2 Wochen", "In Schutzzone oder am Denkmal: zusätzlich 2 Monate vorher an die Denkmalpflege"] },
+    list: ["Mindestens 2 Wochen vor Arbeitsbeginn einreichen", "Gratis, Prüfung meist innert 2 Wochen", "Erst anfangen, wenn die schriftliche Bestätigung da ist", "In Schutzzone oder am Denkmal: zusätzlich 2 Monate vorher an die Denkmalpflege"] },
   bewilligung: { big: "Du brauchst eine Baubewilligung", txt: "Reiche ein Baubegehren ein, am besten online.",
-    list: ["Gebühr hängt von den Baukosten ab – bis CHF 10'000 Baukosten: Entscheid pauschal CHF 100", "Fang erst an, wenn die Bewilligung da ist", "Bei grösseren Vorhaben genug Zeit einplanen"] },
+    list: ["Online erfassen, Belegexemplar zweifach unterschrieben einreichen", "Gebühr hängt von den Baukosten ab – bis CHF 10'000 Baukosten: Entscheid pauschal CHF 100", "Fang erst an, wenn die Bewilligung da ist"] },
   fragen: { big: "Vorher kurz nachfragen", txt: "Das hängt vom Einzelfall ab. Ein Anruf beim BGI klärt es schneller als jede Recherche." },
   allmend: { big: "Keine Baubewilligung – aber Allmend", txt: "Für Strasse und Trottoir ist die Allmendverwaltung zuständig, nicht das Bauinspektorat." }
 };
@@ -448,7 +448,7 @@ const S = [
       ["Kein Notfall", "Kurzbewilligung online, <span class='mono'>CHF 20</span>"]
     ],
     links: [
-      ["Zufahrtsbewilligung Kernzone (Abschnitt Notfallbewilligung)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt/zufahrtsbewilligung-zur-kernzone-innenstadt"],
+      ["Zufahrtsbewilligung Kernzone (Abschnitt Notfallbewilligung)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrtsbewilligungen/antrag-zufahrtsbewilligung-zur-kernzone-innenstadt"],
       ["Zufahrt Innenstadt (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt"]
     ]
   },
@@ -491,7 +491,7 @@ const S = [
     steps: [
       ["Bau-Check machen", "Wähle oben, was du planst. Du siehst sofort, welche Stufe gilt."],
       ["Schutzzone klären", "Steht das Gebäude in einer Schutzzone oder ist es ein Denkmal, gelten strengere Regeln. Im Zweifel beim BGI fragen."],
-      ["Melden oder Baubegehren einreichen", "Meldung: Formular, mindestens 2 Wochen vor Arbeitsbeginn. Baubegehren: online. Ab 1.1.2027 geht es nur noch digital."],
+      ["Melden oder Baubegehren einreichen", "Meldung: Formular, mindestens 2 Wochen vor Arbeitsbeginn. Baubegehren: online erfassen, Belegexemplar ausdrucken, zweifach unterschreiben und mit den Unterlagen einreichen. Ab 1.1.2027 nur noch digital."],
       ["Erst dann loslegen", "Bei Bewilligungspflicht erst bauen, wenn der Entscheid da ist. Nachbarn können Einsprache erheben."]
     ],
     facts: [
@@ -509,6 +509,7 @@ const S = [
     answer: "Mo–Sa von 05:00 bis 11:00 darfst du ohne Bewilligung in die Kernzone liefern. Ausserhalb dieser Zeit brauchst du eine Kurz- oder Dauerbewilligung, damit die Poller sinken.",
     steps: [
       ["Zuerst: geht es in der Güterumschlag-Zeit?", "Mo–Sa 05:00–11:00 ist Liefern ohne Bewilligung erlaubt."],
+      ["Betrieb in der Innenstadt?", "Für Firmen in der Kernzone gilt zusätzlich: Güterumschlag Mo–Fr 20–11 Uhr (bis zum Folgetag) und von Samstag 20 Uhr bis Montag 11 Uhr ohne Bewilligung."],
       ["Einzelfall: Kurzbewilligung", "Wenn es dringend ist oder nicht im Zeitfenster geht. Echter Notfall (z.B. Wasserrohrbruch): telefonisch bei der Kantonspolizei, +41 61 208 01 46."],
       ["Regelmässig: Dauerbewilligung", "Für Firmen in der Kernzone mit eigenem Parkplatz oder für regelmässige Lieferung rasch verderblicher Waren."],
       ["Oft (über 30× pro Jahr): Kundenkonto", "Dann kosten Kurzbewilligungen weniger."]
@@ -519,7 +520,7 @@ const S = [
     ],
     links: [
       ["Zufahrt Innenstadt (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt"],
-      ["Zufahrtsbewilligung Kernzone", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt/zufahrtsbewilligung-zur-kernzone-innenstadt"]
+      ["Zufahrtsbewilligung Kernzone", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrtsbewilligungen/antrag-zufahrtsbewilligung-zur-kernzone-innenstadt"]
     ]
   },
   {
@@ -530,9 +531,9 @@ const S = [
     keys: "restaurant café cafe bar beiz eröffnen wirtepatent betriebsbewilligung gastgewerbe take-away takeaway bistro übernehmen",
     answer: "Du brauchst eine persönliche Betriebsbewilligung, meistens eine Baubewilligung für den Umbau und eine Meldung ans Kantonslabor. Vor der Bewilligung darfst du nicht eröffnen.",
     steps: [
-      ["Bagatellfall prüfen", "Ohne Alkohol, höchstens 20 m² Konsumfläche und 10 Plätze? Dann evtl. keine Bewilligung nötig – aber Bestätigung einholen."],
+      ["Brauchst du überhaupt eine Bewilligung?", "Nur Take-away (Essen und Getränke, auch Alkohol, nur zum Mitnehmen): keine Gastro-Bewilligung. Bagatellbetrieb ohne Alkohol, max. 20 m² Konsumfläche und max. 10 Plätze innen und aussen: keine Betriebsbewilligung. In beiden Fällen klärt die Abteilung Baubewilligungen, ob es ein Baugesuch braucht."],
       ["Baubewilligung klären", "Für Einrichtung oder Umbau eines Gastrobetriebs ist meist eine Baubewilligung nötig."],
-      ["Betriebsbewilligung beantragen", "Unterlagen: Miet-/Pacht-/Kaufvertrag, ggf. Arbeitsvertrag, Strafregister- und Betreibungsauszug, Fähigkeitsausweis (Wirtepatent)."],
+      ["Betriebsbewilligung beantragen", "Nur mit gastgewerblichem Fähigkeitsausweis (Wirtepatent). Unterlagen vollständig einreichen – unvollständige Gesuche werden kostenpflichtig zurückgewiesen."],
       ["Lebensmittelbetrieb melden", "Meldeformular mit Selbstkontrollkonzept ans Kantonale Laboratorium."],
       ["Erst dann eröffnen", "Die Bewilligung ist persönlich. Wechselt die verantwortliche Person, braucht es eine neue."]
     ],
@@ -553,22 +554,21 @@ const S = [
     teaser: "Zwei Bewilligungen nacheinander: Bau, dann Allmend.",
     branchen: ["Gastro"],
     keys: "boulevard aussenbewirtung terrasse tische stühle draussen trottoir gartenbeiz sommer",
-    answer: "Für eine neue Boulevardfläche brauchst du zuerst eine Baubewilligung, danach eine Nutzungsbewilligung der Allmendverwaltung. Rechne mit bis zu 3 Monaten.",
+    answer: "Für eine neue Boulevardfläche brauchst du zuerst eine Baubewilligung, danach eine Nutzungsbewilligung der Allmendverwaltung.",
     steps: [
-      ["Baubewilligung", "Beim Bau- und Gastgewerbeinspektorat, wenn du bisher nicht draussen bewirtet hast."],
+      ["Baubewilligung", "Beim Bau- und Gastgewerbeinspektorat – für eine neue Aussenbewirtung, aber auch wenn du die Fläche vergrösserst oder die Aussen-Öffnungszeiten verlängerst."],
       ["Nutzungsbewilligung Allmend", "Mit bewilligtem Situationsplan (1:200), Kopie des Bauentscheids und Angaben zur Möblierung."],
       ["Auflagen einhalten", "Nachtruhe ab 23 Uhr, keine Beschallung, keine Zäune, Sichtschutzwände oder Zelte."]
     ],
     facts: [
-      ["Kosten", "<span class='mono'>CHF 80</span> pro m² und Jahr (Zone I) · Zone II 25 % günstiger"],
-      ["Dauer", "In der Regel 3 Monate ab Gesuch"],
+      ["Kosten", "Innenstadt <span class='mono'>CHF 80</span> pro m² und Jahr · ausserhalb der Innenstadt 25 % günstiger (siehe Gebührenzonenplan)"],
       ["Zuständig", `${ALLMEND.name}<br>${ALLMEND.adr}<br><span class="mono">${ALLMEND.tel}</span>`]
     ],
     links: [
       ["Verkaufen & Bewirten (bs.ch)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/verkaufen-bewirten"],
       ["Aussenbewirtung – Baubewilligung", "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren/aussenbewirtung"],
       ["Gebührenverordnung öffentlicher Raum (SG 724.910)", "https://www.gesetzessammlung.bs.ch/app/de/texts_of_law/724.910"],
-      ["Allgemeine Auflagen (PDF)", "https://media.bs.ch/original_file/c05b8b60bc3c3250a4da59bf086e11fe3579888d/allgemeine-auflagen-fuer-boulevard-restaurants.pdf"]
+      ["Allgemeine Auflagen (PDF)", "https://media.bs.ch/original_file/03a03ba54dad22170dc7476e2a12ebd16acb4f3b/allgemeine-auflagen-fuer-boulevard-restaurants-0.pdf"]
     ]
   },
   {
@@ -600,7 +600,7 @@ const S = [
     keys: "schild firmenschild reklame werbung beschriftung leuchtreklame reklamereiter kundenstopper aufsteller warenauslage schaufenster trottoir",
     answer: "Ein unbeleuchtetes Firmenschild bis 0,5 m² ist meist bewilligungsfrei (in Schutzzonen meldepflichtig). Ein Reklamereiter oder Waren auf dem Trottoir brauchen eine kostenpflichtige Bewilligung der Allmendverwaltung.",
     steps: [
-      ["Schild am Gebäude", "Bis 0,5 m², unbeleuchtet: meist frei. Grösser, beleuchtet oder in Schon-/Schutzzone: Formular «Baubewilligungspflichtige Bauten und Anlagen» mit Anhang F, zweifach."],
+      ["Schild am Gebäude", "Unbeleuchtet bis 0,5 m² pro Betrieb: frei, in Schon- und Schutzzonen meldepflichtig. Folierung innen am Schaufenster: frei. Alles andere (beleuchtet, grösser): Reklamebegehren über das Online-Baubegehren."],
       ["Reklamereiter auf dem Trottoir", "Max. 60 × 85 cm, Eingänge und Schaufenster frei lassen. Wird nur mit Begründung bewilligt, z.B. Geschäft ohne Erdgeschoss oder ohne Schaufenster."],
       ["Warenauslage", "Ebenfalls Gesuch bei der Allmendverwaltung."]
     ],
@@ -641,7 +641,7 @@ const S = [
     teaser: "Bewerbung pro Standort, dann Bau- und Nutzungsgesuch.",
     branchen: ["Gastro", "Detailhandel"],
     keys: "foodtruck food truck verkaufsstand stand marktstand markt buvette glace ape foodbike saison",
-    answer: "Feste Standorte werden ausgeschrieben: Du bewirbst dich mit Konzept, wirst ausgewählt und stellst dann ein Bau- und Nutzungsgesuch. Bis zur Bewilligung kann es 3 Monate dauern.",
+    answer: "Feste Standorte werden ausgeschrieben: Du bewirbst dich mit Konzept, wirst ausgewählt und stellst dann ein Bau- und Nutzungsgesuch. Bis zur Bewilligung kann es 3 Monate dauern. Stand 20.11.2026: Zurzeit hat es keine freien Standorte.",
     steps: [
       ["Bewerben", "Bewerbungsformular ausfüllen und unterschreiben, mit Betriebs-/Gastrokonzept für einen konkreten Standort per E-Mail an av.ausschreibungen@bs.ch. Pro Bewerbung wird nur ein Standort vergeben."],
       ["Bau- und Nutzungsgesuch", "Nach der Auswahl. Dauer bis 3 Monate."],
@@ -655,7 +655,7 @@ const S = [
     ],
     links: [
       ["Verkaufen & Bewirten (bs.ch)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/verkaufen-bewirten"],
-      ["Leitfaden mobile Gastronomie (PDF)", "https://media.bs.ch/original_file/a602fd0afa338eb0adb4dbe34f64a7a17594bbf1/leitfaden-mobile-saisonale-gastronomie.pdf"]
+      ["Leitfaden mobile Gastronomie (PDF)", "https://media.bs.ch/original_file/6c87fae5998815d8b8b6310efcb9223d064e90eb/leitfaden-mobile-saisonale-gastronomie-0.pdf"]
     ]
   },
   {
@@ -710,7 +710,6 @@ const S = [
 const F = {
   meldung: ["Meldeformular «Meldepflichtige Bauten und Anlagen»", "https://formulare.bs.ch/bgi/meldepflichtige-bauten-und-anlagen?ekonto=optional", "online"],
   baubegehren: ["Online-Baubegehren", "https://jaxforms.cloud.bs.ch/formservice/services/rest/template/public/KTBS/de/index.html", "online"],
-  baupapier: ["Formular «Baubewilligungspflichtige Bauten und Anlagen» (Papier)", "https://media.bs.ch/original_file/8fa9a33c509f7e772095a93c4c23915c43677683/170-101-baubewilligungspflichtige-bauten-neu.pdf", "pdf"],
   kleinst: ["Meldung Kleinstnutzung Allmend (bis 10 m², 20 Tage)", "https://formulare.bs.ch/tiefbauamt/kleinstnutzung-oeffentlicher-grund?ekonto=optional", "online"],
   bauinst: ["Gesuch Bauinstallation auf Allmend (Mulde, Gerüst …)", "https://formulare.bs.ch/tiefbauamt/temporaere-bauliche-nutzung-oeffentlichem-grund", "online"],
   zufahrt: ["Zufahrtsbewilligung Innenstadt", "https://formulare.bs.ch/mfk/zufahrtsbewilligung", "online"],
@@ -721,7 +720,8 @@ const F = {
   gastroAend: ["Änderung Betriebsbewilligung", "https://media.bs.ch/original_file/53cfe0bba06f99d31eaaa1cf52ed13da95b9beaa/170-202-aenderung-betriebsbewilligung-0.pdf", "pdf"],
   lebensmittel: ["Meldeformular Lebensmittelbetrieb", "https://media.bs.ch/original_file/5c198f1d428ac66048652b600ff5fa2eb82e61b6/klbs-210107-meldeformular-fuer-lebensmittelbetriebe-tatoostu.pdf", "pdf"],
   allmendGesuche: ["Gesuche öffentlicher Raum (Boulevard, Reklamereiter, Auslage)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/gesuche-zur-nutzung-des-oeffentlichen-raums", "seite"],
-  foodtruck: ["Bewerbungsformular Verkaufsstand (Download auf «Verkaufen & Bewirten»)", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/verkaufen-bewirten", "seite"],
+  foodtruck: ["Bewerbungsformular Verkaufsstand", "https://media.bs.ch/original_file/3db6534f6703767f7001317b3bdb708ac7054f20/formular-fuer-bewerbende-0.pdf", "pdf"],
+  foodInfo: ["Infodokument Verkaufsstände (vorher lesen)", "https://media.bs.ch/original_file/2b05b5e3eb0d3223904b9c526c8afb8d4f8e9bb9/infodokument-verkaufsstaende-2.pdf", "info"],
   familie: ["Bewilligungsgesuch Familienbetriebe", "https://www.bs.ch/wsu/awa/arbeitsbeziehungen/bewilligungen-informationen-fuer-unternehmen/ruhetags-und-ladenoeffnungszeiten", "seite"],
   hr: ["Handelsregister-Formulare", "https://www.bs.ch/jsd/zentraler-rechtsdienst/handelsregisteramt", "seite"],
   entsch: ["Infoblatt Entschädigungsansprüche", "https://media.bs.ch/original_file/e2ee2b9fcc9e7a0e8ff325ea1e61fe827883e5a2/infoblatt-entschaedigungsansprueche-bei-bauprojekten-des-kan.pdf", "info"]
@@ -733,12 +733,12 @@ const FORMS = {
   "restaurant-eroeffnen": [F.gastroNeu, F.gastroAend, F.lebensmittel, F.baubegehren],
   boulevard: [F.baubegehren, F.allmendGesuche],
   "mulde-geruest": [F.kleinst, F.bauinst],
-  reklame: [F.baupapier, F.allmendGesuche],
+  reklame: [F.baubegehren, F.allmendGesuche],
   oeffnungszeiten: [F.familie],
-  foodtruck: [F.foodtruck],
+  foodtruck: [F.foodtruck, F.foodInfo],
   "lebensmittel-melden": [F.lebensmittel],
   "firma-gruenden": [F.hr],
-  baubewilligung: [F.meldung, F.baubegehren, F.baupapier],
+  baubewilligung: [F.meldung, F.baubegehren],
   "baustelle-entschaedigung": [F.entsch]
 };
 const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allmend: [F.kleinst, F.bauinst] };
@@ -747,16 +747,12 @@ const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allme
 const FRISTEN = {
   gewerbeparkkarte: [["Sofort", "Direkt nach dem Online-Formular, ab Wunschdatum – nutzbar ab Bestätigung per Mail oder in der App ParkSmart Basel"]],
   "restaurant-eroeffnen": [["ca. 1 Monat", "Ab vollständigen Unterlagen"]],
-  boulevard: [["ca. 3 Monate", "Nutzungsbewilligung der Allmendverwaltung, ab Gesuch"]],
-  "mulde-geruest": [["5 Arbeitstage", "Gültig, wenn innert 5 Arbeitstagen kein Einwand kommt"]],
   foodtruck: [["bis 3 Monate", "Bau- und Nutzungsbewilligung nach der Zusage"]],
   baubewilligung: [["ca. 2 Wochen", "Bestätigung durch das BGI"]]
 };
 const FRIST_NAME = {
   gewerbeparkkarte: "Gewerbeparkkarte",
   "restaurant-eroeffnen": "Betriebsbewilligung Gastro",
-  boulevard: "Boulevard",
-  "mulde-geruest": "Kleinstnutzung Allmend",
   foodtruck: "Foodtruck / Verkaufsstand",
   baubewilligung: "Meldeverfahren Bau"
 };
@@ -935,7 +931,7 @@ function renderBau(b) {
         <div class="big">${esc(V.big)}</div>
         <p>${esc(V.txt)}</p>
         ${V.list ? `<ul>${V.list.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>` : ""}
-        ${VERDICT_FORMS[level] ? formBtns(level === "bewilligung" && b.id === "leuchtreklame" ? [F.baubegehren, F.baupapier] : VERDICT_FORMS[level]) : ""}
+        ${VERDICT_FORMS[level] ? formBtns(VERDICT_FORMS[level]) : ""}
         ${b.note ? `<p><strong>Gut zu wissen:</strong> ${esc(b.note)}</p>` : ""}
         <p><strong>Fragen?</strong> ${contact}</p>
         ${b.see ? `<p><a href="#${b.see}">Mehr dazu: ${esc(S.find((s) => s.id === b.see).title)} →</a></p>` : ""}
