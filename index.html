@@ -199,6 +199,18 @@ main .wrap { padding-block: 1.75rem 3rem; display: grid; gap: 1.75rem; }
 .ftable tbody th { font-weight: 600; width: 32%; }
 .ftable td.mono { white-space: nowrap; font-weight: 600; }
 
+/* Ämter */
+.sos.aemter-link { background: var(--accent-soft); border-color: var(--hero2); }
+.sos.aemter-link b, .sos.aemter-link .go { color: var(--accent); }
+.aemter { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 1rem; }
+.amt { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.2rem; display: grid; gap: .7rem; align-content: start; min-width: 0; }
+.amt h3 { font-size: 1.1rem; }
+.amt h3 small { display: block; font-size: .88rem; font-weight: 400; color: var(--muted); margin-top: .15rem; }
+.amt .wofuer { margin: 0; font-size: .93rem; color: var(--muted); }
+.amt .big-tel { font-weight: 700; font-size: 1.05rem; }
+.amt .mail { overflow-wrap: anywhere; }
+.help a { color: inherit; font-weight: 700; }
+
 /* Mobil */
 body[data-view="detail"] .top .intro, body[data-view="detail"] .top .chips { display: none; }
 body[data-view="detail"] .top .wrap { padding-block: 1rem 1.25rem; }
@@ -754,6 +766,59 @@ function formBtns(list) {
     `<a class="fbtn${k === "seite" || k === "info" ? " page" : ""}" href="${u}" target="_blank" rel="noopener">${t} ↗<small>${LABEL[k]}</small></a>`).join("")}</div>`;
 }
 
+/* Ämter: Kontakt, Telefonzeiten, Schalter. Stand 20.11.2026, an Feiertagen abweichend. */
+const AEMTER = [
+  { name: "Kontaktpunkt für Unternehmen", sub: "Amt für Wirtschaft und Arbeit", wofuer: "Erste Anlaufstelle, wenn du nicht weisst, welches Amt zuständig ist",
+    adr: "Utengasse 36, 4058 Basel", tel: "+41 61 267 66 99", telZeit: "Mo–Fr 9.00–12.00 und 13.30–16.30", mail: "business@bs.ch",
+    url: "https://www.bs.ch/themen/arbeit-und-steuern/unternehmen/unterstuetzung-von-unternehmen/kontaktpunkt-fuer-unternehmen" },
+  { name: "Bau- und Gastgewerbeinspektorat", sub: "Baubewilligungen und Meldeverfahren", wofuer: "Baubewilligung, Meldeverfahren, Firmenschild, Umbau",
+    adr: "Münsterplatz 11, 4001 Basel", tel: "+41 61 267 92 00", telZeit: "täglich 9.00–11.00 und 14.00–16.00", mail: "bvdbgi@bs.ch",
+    schalter: "Vorher anrufen – die Angaben zum Schalter widersprechen sich", url: "https://www.bs.ch/bvd/bgi/abteilungen-des-bgi" },
+  { name: "Bau- und Gastgewerbeinspektorat", sub: "Gastgewerbebewilligungen", wofuer: "Betriebsbewilligung für Restaurant, Café, Bar",
+    adr: "Münsterplatz 11, 4001 Basel", tel: "+41 61 267 70 26", telZeit: "täglich 8.00–12.00 und 14.00–16.00", mail: "bvdbgi@bs.ch",
+    url: "https://www.bs.ch/bvd/bgi/gastgewerbebewilligungen/restaurationsbetrieb" },
+  { name: "Allmendverwaltung", sub: "Tiefbauamt", wofuer: "Boulevard, Mulde, Gerüst, Reklamereiter, Verkaufsstand",
+    adr: "Dufourstrasse 50, 4001 Basel", tel: "+41 61 267 93 57", telZeit: "Mo–Fr 9.00–12.00 und 13.30–16.00", mail: "bvdav@bs.ch",
+    schalter: "Kein Schalter angegeben – vorher anrufen", url: "https://www.bs.ch/bvd/tiefbauamt/abteilungen-des-tiefbauamts" },
+  { name: "Motorfahrzeugkontrolle", sub: "Kantonspolizei", wofuer: "Gewerbeparkkarte, Zufahrt Innenstadt",
+    adr: "Clarastrasse 38, 4058 Basel", tel: "+41 61 208 00 60", telZeit: "Mo–Fr 9.00–11.00 und 14.00–16.00", mail: "fahrzeuge@jsd.bs.ch",
+    schalter: "Mo, Mi, Do 8.00–12.00 und 13.30–16.00 · Di 8.00–12.00 · Fr 8.00–13.00",
+    extra: "Notfall-Zufahrt Innenstadt: 061 208 01 46 (nur Notfälle)",
+    url: "https://www.bs.ch/jsd/polizei/fuer-ihre-sicherheit/im-verkehr/im-strassenverkehr/motorfahrzeugkontrolle" },
+  { name: "Handelsregisteramt", sub: "", wofuer: "Firma gründen, ändern, löschen; Handelsregisterauszug",
+    adr: "Claramattweg 8, 1. OG, 4057 Basel", tel: "+41 61 267 44 55", telZeit: "Mo–Fr 8.00–12.00 und 14.00–17.00", mail: "info.hra@jsd.bs.ch",
+    schalter: "Mo–Fr 8.30–11.30 und 13.30–16.00", url: "https://www.bs.ch/jsd/zentraler-rechtsdienst/handelsregisteramt" },
+  { name: "Kantonales Laboratorium", sub: "Lebensmittelinspektorat", wofuer: "Lebensmittelbetrieb melden, Hygiene",
+    adr: "Kannenfeldstrasse 2, 4056 Basel", tel: "+41 61 385 25 00", telZeit: "Mo–Do 8.30–11.45 und 13.30–16.30 · Fr bis 16.00", mail: "sekr.kantonslabor@bs.ch",
+    url: "https://www.bs.ch/gd/kantonslabor/im-fokus/lebensmittelsicherheit" },
+  { name: "Amt für Wirtschaft und Arbeit", sub: "", wofuer: "Ladenöffnungszeiten, Sonntagsverkauf, Familienbetriebe",
+    adr: "Utengasse 36, 4058 Basel", tel: "+41 61 267 40 58", telZeit: "Mo–Fr 8.00–17.00", mail: "awa@bs.ch",
+    url: "https://www.bs.ch/wsu/awa/arbeitsbeziehungen/bewilligungen-informationen-fuer-unternehmen/ruhetags-und-ladenoeffnungszeiten" }
+];
+function renderAemter() {
+  const map = (a) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(a.replace(/, 1\. OG/, ""));
+  $("#view").innerHTML = `
+    <a class="back" href="#">← Startseite</a>
+    <section class="detail"><header><h2>Ämter: Öffnungszeiten und Kontakt</h2>
+      <p class="answer">Wann du wen erreichst, wo das Amt ist und wofür es zuständig ist. An Feiertagen gelten andere Zeiten.</p></header>
+      <div class="aemter">${AEMTER.map((a) => `<article class="amt">
+        <h3>${esc(a.name)}${a.sub ? `<small>${esc(a.sub)}</small>` : ""}</h3>
+        <p class="wofuer">${esc(a.wofuer)}</p>
+        <dl class="facts">
+          <div><dt>Telefon</dt><dd><span class="big-tel">${esc(a.tel)}</span><br>${esc(a.telZeit)}</dd></div>
+          ${a.schalter ? `<div><dt>Schalter</dt><dd>${esc(a.schalter)}</dd></div>` : ""}
+          <div><dt>Adresse</dt><dd>${esc(a.adr)}<br><a href="${map(a.adr)}" target="_blank" rel="noopener">Auf der Karte zeigen ↗</a></dd></div>
+          <div><dt>E-Mail</dt><dd class="mail">${esc(a.mail)}</dd></div>
+          ${a.extra ? `<div><dt>Notfall</dt><dd>${esc(a.extra)}</dd></div>` : ""}
+        </dl>
+        <a class="more" href="${a.url}" target="_blank" rel="noopener">Seite des Amts ↗</a>
+      </article>`).join("")}</div>
+      <p class="stand">Zusammengefasst am ${STAND}. Vor einem Besuch lohnt sich ein Blick auf die Seite des Amts.</p>
+    </section>
+    ${helpBand()}`;
+  window.scrollTo(0, 0);
+}
+
 const $ = (s) => document.querySelector(s);
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const norm = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -808,7 +873,7 @@ function renderFristen() {
 function helpBand() {
   return `<section class="help" aria-label="Hilfe">
     <div><h2>Nicht gefunden, was du suchst?</h2>
-    <p>Der Kontaktpunkt für Unternehmen des Kantons sagt dir, welches Amt zuständig ist.</p></div>
+    <p>Der Kontaktpunkt für Unternehmen des Kantons sagt dir, welches Amt zuständig ist. <a href="#aemter">Alle Ämter mit Öffnungszeiten →</a></p></div>
     <div class="contact">${KONTAKTPUNKT.tel}<br>${KONTAKTPUNKT.mail}</div>
   </section>`;
 }
@@ -892,6 +957,7 @@ function renderHome() {
   $("#view").innerHTML = `
     ${q ? "" : `<a class="sos" href="#notfall"><span><b>Notfall?</b> <span>Sofort in die Innenstadt, z.B. bei Wasserrohrbruch – Notfallbewilligung per Telefon</span></span><span class="go">Was tun →</span></a>`}
     ${q ? "" : bauHero()}
+    ${q ? "" : `<a class="sos aemter-link" href="#aemter"><span><b>Ämter</b> <span>Öffnungszeiten, Telefon, Adresse – wen erreiche ich wann?</span></span><span class="go">Übersicht →</span></a>`}
     ${q ? "" : `<a class="sos fristen-link" href="#fristen"><span><b>Fristen</b> <span>Wie lange dauert es bis zur Bewilligung?</span></span><span class="go">Übersicht →</span></a>`}
     <section>
       <p class="section-label">${label}</p>
@@ -973,6 +1039,7 @@ function route_() {
   setView(id ? "detail" : "home");
   if (id === "bau-check") return renderBauList();
   if (id === "fristen") return renderFristen();
+  if (id === "aemter") return renderAemter();
   if (id.startsWith("bau-")) {
     const b = BAU.find((x) => "bau-" + x.id === id);
     if (b) { schutzAnswer = null; return renderBau(b); }
