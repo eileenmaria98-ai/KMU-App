@@ -362,25 +362,25 @@ const S = [
     teaser: "Wasserrohrbruch, Leitung kaputt, sofort in die Innenstadt.",
     branchen: ["Gastro", "Handwerk & Bau", "Detailhandel"],
     keys: "notfall notfallbewilligung dringend sofort wasserrohrbruch rohrbruch lift leitung beschädigt gas strom wasser schaden einsturz poller innenstadt pikett",
-    answer: "Eine allgemeine «Notfallbewilligung» gibt es nicht. Je nach Fall gilt: Menschen in Gefahr → Notruf. Leitung beschädigt → sofort IWB. Dringend in die Innenstadt → vorher der Behörde melden, dann gibt es die Kurzbewilligung ohne Verzug.",
+    answer: "Eine allgemeine «Notfallbewilligung» gibt es nicht. Je nach Fall gilt: Menschen in Gefahr → Notruf. Leitung beschädigt → sofort IWB. Dringend in die Innenstadt → Kantonspolizei anrufen, die Notfallbewilligung gibt es telefonisch.",
     sos: [
       ["112", "Menschen in Gefahr (allgemeiner Notruf)"],
       ["118", "Feuer, Gas riechen"],
-      ["0800 400 800", "IWB-Störfallnummer: Strom-, Gas-, Wasser-, Fernwärme- oder Telekomleitung beschädigt"]
+      ["0800 400 800", "IWB-Störfallnummer: Strom-, Gas-, Wasser-, Fernwärme- oder Telekomleitung beschädigt"],
+      ["061 208 01 46", "Kantonspolizei: Notfall-Zufahrt Innenstadt (nur echte Notfälle)"]
     ],
     steps: [
       ["Zuerst Gefahr abwenden", "Menschen in Sicherheit, Notruf wählen. Schaden begrenzen, z.B. Wasser abstellen. Das verlangt auch die Gebäudeversicherung."],
       ["Leitung getroffen? Sofort IWB anrufen", "Bei Bauarbeiten beschädigte Leitungen müssen sofort über 0800 400 800 gemeldet werden."],
-      ["Dringend in die Innenstadt (Poller)?", "Echter Notfall wie Wasserrohrbruch oder stehender Lift: zuerst der Behörde (Motorfahrzeugkontrolle der Kantonspolizei) melden. Dann wird die Kurzbewilligung ohne Verzug erteilt, CHF 20. Nicht dringend: normales Online-Formular."],
+      ["Dringend in die Innenstadt (Poller)?", "Bei einem echten Notfall (plötzlich, unvorhersehbar, sofortiges Handeln nötig – z.B. Wasserrohrbruch, stehender Lift) erteilt die Kantonspolizei die Kurzbewilligung telefonisch: +41 61 208 01 46. Die Nummer ist nur für Notfälle. Sonst: normales Online-Formular."],
       ["Reparatur braucht mehr als Sicherung?", "Wenn umgebaut werden muss: vorher das BGI anrufen. Wer ohne nötige Bewilligung baut, riskiert Baustopp und ein nachträgliches Verfahren."],
       ["Mulde oder Absperrung auf der Strasse?", "Eine Notfall-Regel dafür haben wir nicht gefunden. Ruf die Allmendverwaltung an, bevor du etwas hinstellst."]
     ],
     facts: [
-      ["Innenstadt-Zufahrt", "Motorfahrzeugkontrolle der Kantonspolizei · Kurzbewilligung <span class='mono'>CHF 20</span>"],
+      ["Notfall-Zufahrt Innenstadt", "Kantonspolizei, telefonisch: <span class='mono'>+41 61 208 01 46</span>"],
       ["Bau", `${BGI_BAU.name}<br><span class="mono">${BGI_BAU.tel}</span>`],
       ["Strasse & Trottoir", `${ALLMEND.name}<br><span class="mono">${ALLMEND.tel}</span>`]
     ],
-    conflict: "Die Telefonnummer für Notfall-Zufahrten ausserhalb der Bürozeiten konnten wir nicht bestätigen. Bitte auf der offiziellen Seite nachsehen und vorab im Handy speichern.",
     links: [
       ["Zufahrtsbewilligung Kernzone (Abschnitt Notfallbewilligung)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt/zufahrtsbewilligung-zur-kernzone-innenstadt"],
       ["Verordnung Zufahrt Innenstadt (SG 952.300)", "https://www.gesetzessammlung.bs.ch/app/de/texts_of_law/952.300/versions/2748"],
@@ -443,7 +443,7 @@ const S = [
     answer: "Mo–Sa von 05:00 bis 11:00 darfst du ohne Bewilligung in die Kernzone liefern. Ausserhalb dieser Zeit brauchst du eine Kurz- oder Dauerbewilligung, damit die Poller sinken.",
     steps: [
       ["Zuerst: geht es in der Güterumschlag-Zeit?", "Mo–Sa 05:00–11:00 ist Liefern ohne Bewilligung erlaubt."],
-      ["Einzelfall: Kurzbewilligung", "Wenn es dringend ist oder nicht im Zeitfenster geht."],
+      ["Einzelfall: Kurzbewilligung", "Wenn es dringend ist oder nicht im Zeitfenster geht. Echter Notfall (z.B. Wasserrohrbruch): telefonisch bei der Kantonspolizei, +41 61 208 01 46."],
       ["Regelmässig: Dauerbewilligung", "Für Firmen in der Kernzone mit eigenem Parkplatz oder für regelmässige Lieferung rasch verderblicher Waren."],
       ["Oft (über 30× pro Jahr): Kundenkonto", "Dann kosten Kurzbewilligungen weniger."]
     ],
@@ -681,7 +681,7 @@ const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allme
 const FRISTEN = {
   gewerbeparkkarte: [["3–5 Arbeitstage", "Bearbeitung des Antrags"], ["Wunschdatum", "Die Karte gilt ab dem Datum, das du im Formular angibst"]],
   "zufahrt-innenstadt": [["Mo–Sa 05–11 Uhr", "In diesem Zeitfenster ist Liefern ohne Bewilligung erlaubt"], ["Vor der Fahrt", "Kurzbewilligung beantragen, wenn du ausserhalb des Zeitfensters fahren musst"]],
-  notfall: [["Sofort", "Leitungsschaden an IWB melden: 0800 400 800"], ["Vor der Fahrt", "Notfall-Zufahrt der Behörde melden – dann wird ohne Verzug bewilligt"]],
+  notfall: [["Sofort", "Leitungsschaden an IWB melden: 0800 400 800"], ["Vor der Fahrt", "Notfall-Zufahrt bei der Kantonspolizei anrufen: 061 208 01 46"]],
   "restaurant-eroeffnen": [["ca. 1 Monat", "Entscheid über die Betriebsbewilligung, ab vollständigen Unterlagen"], ["Vor Eröffnung", "Ohne Bewilligung darfst du nicht eröffnen"], ["14 Tage", "Änderungen am Lebensmittelbetrieb ans Kantonslabor melden"]],
   boulevard: [["ca. 3 Monate", "Entscheid über die Nutzungsbewilligung ab Gesuch – für den Sommer früh einreichen"], ["ab 23 Uhr", "Nachtruhe draussen"]],
   "mulde-geruest": [["10 Arbeitstage vorher", "Meldung Kleinstnutzung (bis 10 m², max. 20 Tage). Kein Einwand innert 5 Arbeitstagen = ok"], ["2 Wochen vorher", "Gesuch für Mulde, Gerüst, Umschlagplatz"], ["3 Monate vorher", "Gesuch für Kran, Containerbühne"]],
