@@ -155,6 +155,36 @@ main .wrap { padding-block: 1.75rem 3rem; display: grid; gap: 1.75rem; }
 .links a::after { content: " ↗"; }
 .stand { font-size: .85rem; color: var(--muted); }
 
+/* Bau-Check */
+.bau-hero { background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; padding: 1.3rem 1.35rem; display: grid; gap: 1rem; }
+.bau-hero h2 { font-size: clamp(1.35rem, 3vw, 1.75rem); font-weight: 800; }
+.bau-hero p { margin: 0; color: var(--muted); }
+.picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: .6rem; }
+.pick {
+  display: block; text-align: left; font: 500 1rem var(--f-body); color: var(--fg); text-decoration: none;
+  background: var(--bg); border: 1.5px solid var(--line); border-radius: 8px; padding: .75rem .9rem; cursor: pointer;
+}
+.pick:hover, .pick[aria-pressed="true"] { border-color: var(--accent); }
+.pick small { display: block; color: var(--muted); font-size: .85rem; font-weight: 400; }
+.more { font-weight: 600; color: var(--accent); text-decoration: none; }
+.group-label { font: 600 .78rem var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: .5rem 0 0; }
+.q { display: grid; gap: .75rem; }
+.q-buttons { display: flex; gap: .6rem; flex-wrap: wrap; }
+.q-buttons .pick { flex: 1 1 140px; text-align: center; font-weight: 600; }
+.verdict { border-radius: 12px; padding: 1.25rem 1.35rem; display: grid; gap: .6rem; }
+.verdict .big { font: 800 clamp(1.4rem, 3.4vw, 1.9rem) var(--f-display); line-height: 1.15; }
+.verdict p { margin: 0; max-width: 65ch; }
+.verdict ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+.v-frei { background: var(--ok-bg); } .v-frei .big { color: var(--ok); }
+.v-melden { background: var(--warn-bg); color: var(--warn-fg); }
+.v-bewilligung { background: var(--no-bg); } .v-bewilligung .big { color: var(--no); }
+.v-fragen { background: var(--surface); border: 2px dashed var(--line); }
+.ladder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+@media (max-width: 720px) { .ladder { grid-template-columns: 1fr; } }
+.ladder > div { border-radius: 10px; padding: 1rem 1.1rem; display: grid; gap: .3rem; align-content: start; }
+.ladder b { font-family: var(--f-display); font-size: 1.05rem; }
+.ladder span { font-size: .93rem; }
+
 footer { border-top: 1px solid var(--line); }
 footer .wrap { padding-block: 1.5rem 2.5rem; color: var(--muted); font-size: .88rem; display: grid; gap: .4rem; }
 footer p { margin: 0; max-width: 75ch; }
@@ -184,12 +214,12 @@ footer p { margin: 0; max-width: 75ch; }
 <footer>
   <div class="wrap">
     <p><strong>Inoffizieller Prototyp.</strong> Das ist kein Angebot des Kantons Basel-Stadt. Alle Angaben ohne Gewähr, zusammengefasst aus öffentlichen Seiten von bs.ch. Verbindlich ist immer die verlinkte offizielle Seite.</p>
-    <p>Stand der Angaben: 19. November 2026.</p>
+    <p>Stand der Angaben: 20. November 2026.</p>
   </div>
 </footer>
 
 <script>
-const STAND = "19.11.2026";
+const STAND = "20.11.2026";
 const BRANCHEN = ["Alle", "Gastro", "Handwerk & Bau", "Detailhandel"];
 
 const KONTAKTPUNKT = {
@@ -201,6 +231,50 @@ const KONTAKTPUNKT = {
 };
 const ALLMEND = { name: "Allmendverwaltung, Tiefbauamt", adr: "Dufourstrasse 50, 4051 Basel", tel: "+41 61 267 93 57" };
 const BGI = { name: "Bau- und Gastgewerbeinspektorat, Abt. Gastgewerbebewilligungen", tel: "+41 61 267 70 26", mail: "bvdbgi@bs.ch" };
+const BGI_BAU = { name: "Bau- und Gastgewerbeinspektorat (BGI)", adr: "Münsterplatz 11, 4001 Basel", tel: "+41 61 267 92 00", mail: "bvdbgi@bs.ch" };
+
+/* Bau-Check: was planst du? → frei / melden / bewilligung / fragen.
+   schutz = true heisst: Schutzzone, Denkmal oder «weiss nicht» (immer die strengere Antwort). */
+const BAU = [
+  { id: "umbau", g: "Laden & Lokal", label: "Lokal umbauen", hint: "Restaurant, Laden, Werkstatt einrichten", v: () => "bewilligung" },
+  { id: "umnutzung", g: "Laden & Lokal", label: "Nutzung ändern", hint: "z.B. Laden → Café, Büro → Praxis", v: () => "fragen",
+    note: "Rechne mit einer Baubewilligung. Beim Baubegehren musst du die frühere Nutzung angeben. Klär es vorher kurz beim BGI." },
+  { id: "boulevard", g: "Laden & Lokal", label: "Tische draussen (neu)", hint: "Boulevard, Aussenbewirtung", v: () => "bewilligung",
+    note: "Danach brauchst du zusätzlich die Nutzungsbewilligung der Allmendverwaltung.", see: "boulevard" },
+  { id: "schild", g: "Schild & Werbung", label: "Firmenschild, unbeleuchtet", hint: "bis 0,5 m² pro Betrieb", ask: true, v: (s) => s ? "melden" : "frei" },
+  { id: "leuchtreklame", g: "Schild & Werbung", label: "Leuchtreklame oder grosses Schild", hint: "beleuchtet oder über 0,5 m²", v: () => "bewilligung",
+    note: "Formular «Baubewilligungspflichtige Bauten und Anlagen» mit Anhang F.", see: "reklame" },
+  { id: "solar", g: "Energie", label: "Solaranlage", hint: "auf Dach oder Fassade", ask: true, v: (s) => s ? "bewilligung" : "melden",
+    note: "Das Meldeverfahren gilt nur in bestimmten Zonen und unter Bedingungen. Wenn unsicher: nachfragen." },
+  { id: "wp-innen", g: "Energie", label: "Wärmepumpe, innen aufgestellt", hint: "Luft-Wasser", v: () => "frei" },
+  { id: "wp-aussen", g: "Energie", label: "Wärmepumpe, aussen aufgestellt", hint: "Luft-Wasser, kleines Gerät", v: () => "melden",
+    note: "Grosse Aussengeräte brauchen eine Baubewilligung." },
+  { id: "erdsonde", g: "Energie", label: "Erdsonde / Sole-Wärmepumpe", hint: "", v: () => "bewilligung" },
+  { id: "fassade", g: "Gebäude & Gelände", label: "Fassade, Fenster, Dach erneuern", hint: "Unterhalt, gleich wie vorher", ask: true, v: (s) => s ? "melden" : "fragen",
+    note: "In Schutzzone oder am Denkmal ist Unterhalt meldepflichtig. Ausserhalb ist er oft frei – kurz nachfragen." },
+  { id: "schuppen", g: "Gebäude & Gelände", label: "Schuppen oder Gartenhaus", hint: "bis 10 m² Grundfläche", v: () => "melden" },
+  { id: "zaun", g: "Gebäude & Gelände", label: "Zaun oder Einfriedung", hint: "bis 1,20 m hoch", v: () => "melden" },
+  { id: "neubau", g: "Gebäude & Gelände", label: "Anbau, Aufstockung, Neubau", hint: "", v: () => "bewilligung" },
+  { id: "strasse", g: "Auf der Strasse", label: "Mulde, Gerüst, Container", hint: "auf Trottoir oder Strasse", v: () => "allmend", see: "mulde-geruest" }
+];
+const QUICK = ["umbau", "umnutzung", "schild", "solar"];
+
+const VERDICT = {
+  frei: { big: "Keine Baubewilligung nötig", txt: "Du brauchst weder eine Baubewilligung noch eine Meldung." },
+  melden: { big: "Keine Baubewilligung – aber melden", txt: "Melde das Vorhaben mit dem Formular «Meldeverfahren» ans BGI.",
+    list: ["Mindestens 2 Wochen vor Arbeitsbeginn einreichen", "Gratis, Prüfung meist innert 2 Wochen", "In Schutzzone oder am Denkmal: zusätzlich 2 Monate vorher an die Denkmalpflege"] },
+  bewilligung: { big: "Du brauchst eine Baubewilligung", txt: "Reiche ein Baubegehren ein, am besten online.",
+    list: ["Gebühr hängt von den Baukosten ab – bis CHF 10'000 Baukosten: Entscheid pauschal CHF 100", "Fang erst an, wenn die Bewilligung da ist", "Bei grösseren Vorhaben genug Zeit einplanen"] },
+  fragen: { big: "Vorher kurz nachfragen", txt: "Das hängt vom Einzelfall ab. Ein Anruf beim BGI klärt es schneller als jede Recherche." },
+  allmend: { big: "Keine Baubewilligung – aber Allmend", txt: "Für Strasse und Trottoir ist die Allmendverwaltung zuständig, nicht das Bauinspektorat." }
+};
+const BAU_LINKS = [
+  ["Brauche ich eine Baubewilligung? (bs.ch)", "https://www.bs.ch/themen/umwelt-und-bauen/bauen-im-kanton-basel-stadt/brauche-ich-eine-baubewilligung"],
+  ["Meldeverfahren", "https://www.bs.ch/bvd/bgi/meldeverfahren"],
+  ["Baubegehren erfassen und einreichen", "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren/baubegehren-erfassen-und-einreichen"],
+  ["Kosten Baubewilligungsverfahren", "https://www.bs.ch/bvd/bgi/baubewilligungsverfahren/kosten-baubewilligungsverfahren"],
+  ["Merkblatt Heizsysteme / Wärmepumpen (PDF)", "https://media.bs.ch/original_file/3c3f06c689e26da3e5de78ba27e6a777e58ea33c/merkblatt-baubegehren-heizsysteme-erneuerbare-energie-ua-0.pdf"]
+];
 
 const S = [
   {
@@ -240,6 +314,26 @@ const S = [
       ["Gewerbeparkkarte (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/gewerbeparkkarte"],
       ["Benutzungsbestimmungen Parkkarten", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/benutzungsbestimmungen-parkkarten"]
     ]
+  },
+  {
+    id: "baubewilligung",
+    title: "Brauche ich eine Baubewilligung?",
+    teaser: "Frei, melden oder bewilligen – der Check sagt es dir in 2 Klicks.",
+    branchen: ["Gastro", "Handwerk & Bau", "Detailhandel"],
+    keys: "baubewilligung baugesuch baubegehren bauen umbau umnutzung meldeverfahren bewilligungsfrei solar wärmepumpe schild fassade fenster dach zaun anbau neubau bauinspektorat bgi",
+    answer: "Es gibt drei Stufen: bewilligungsfrei, Meldeverfahren (gratis, 2 Wochen vorher) oder Baubewilligung (Baubegehren online). Welche gilt, hängt vom Vorhaben ab und davon, ob das Haus in einer Schutzzone steht.",
+    ladder: true,
+    steps: [
+      ["Bau-Check machen", "Wähle oben, was du planst. Du siehst sofort, welche Stufe gilt."],
+      ["Schutzzone klären", "Steht das Gebäude in einer Schutzzone oder ist es ein Denkmal, gelten strengere Regeln. Im Zweifel beim BGI fragen."],
+      ["Melden oder Baubegehren einreichen", "Meldung: Formular, mindestens 2 Wochen vor Arbeitsbeginn. Baubegehren: online, das Verfahren läuft seit 2026 digital."],
+      ["Erst dann loslegen", "Bei Bewilligungspflicht erst bauen, wenn der Entscheid da ist. Nachbarn können Einsprache erheben."]
+    ],
+    facts: [
+      ["Kosten", "Meldung gratis · Baubewilligung nach Baukosten, bis CHF 10'000 Baukosten pauschal <span class='mono'>CHF 100</span>"],
+      ["Zuständig", `${BGI_BAU.name}<br>${BGI_BAU.adr}<br><span class="mono">${BGI_BAU.tel}</span> · <span class="mono">${BGI_BAU.mail}</span>`]
+    ],
+    links: BAU_LINKS
   },
   {
     id: "zufahrt-innenstadt",
@@ -491,11 +585,83 @@ function helpBand() {
   </section>`;
 }
 
+function bauPick(b) {
+  return `<a class="pick" href="#bau-${b.id}">${esc(b.label)}${b.hint ? `<small>${esc(b.hint)}</small>` : ""}</a>`;
+}
+
+function bauHero() {
+  return `<section class="bau-hero" aria-labelledby="bh">
+    <h2 id="bh">Brauche ich eine Baubewilligung?</h2>
+    <p>Wähle, was du planst. Du bekommst sofort die Antwort.</p>
+    <div class="picks">${QUICK.map((id) => bauPick(BAU.find((b) => b.id === id))).join("")}</div>
+    <a class="more" href="#bau-check">Alle Vorhaben anzeigen →</a>
+  </section>`;
+}
+
+function renderBauList() {
+  const groups = [...new Set(BAU.map((b) => b.g))];
+  $("#view").innerHTML = `
+    <a class="back" href="#">← Startseite</a>
+    <section class="bau-hero">
+      <h2>Was planst du?</h2>
+      <p>Wähle das Vorhaben, das am besten passt.</p>
+      ${groups.map((g) => `<p class="group-label">${esc(g)}</p>
+        <div class="picks">${BAU.filter((b) => b.g === g).map(bauPick).join("")}</div>`).join("")}
+    </section>
+    ${helpBand()}`;
+  window.scrollTo(0, 0);
+}
+
+let schutzAnswer = null;
+function renderBau(b) {
+  const needAsk = b.ask && schutzAnswer === null;
+  let body;
+  if (needAsk) {
+    body = `<section class="bau-hero q">
+      <h2>Steht das Gebäude in einer Schutzzone oder ist es ein Denkmal?</h2>
+      <p>Das betrifft vor allem die Altstadt und ältere Häuser. Wenn du es nicht weisst, wähle «Weiss nicht» – du bekommst dann die vorsichtigere Antwort.</p>
+      <div class="q-buttons" id="schutzQ">
+        <button type="button" class="pick" data-s="ja">Ja</button>
+        <button type="button" class="pick" data-s="nein">Nein</button>
+        <button type="button" class="pick" data-s="weiss">Weiss nicht</button>
+      </div>
+    </section>`;
+  } else {
+    const level = b.v(schutzAnswer !== "nein");
+    const V = VERDICT[level];
+    const ctx = b.ask ? `<p class="stand">Deine Angabe: Schutzzone/Denkmal – ${schutzAnswer === "ja" ? "ja" : schutzAnswer === "nein" ? "nein" : "weiss nicht (vorsichtige Antwort)"}. <a href="#" id="resetSchutz">Ändern</a></p>` : "";
+    const contact = level === "allmend"
+      ? `${ALLMEND.name} · <span class="mono">${ALLMEND.tel}</span>`
+      : `${BGI_BAU.name} · <span class="mono">${BGI_BAU.tel}</span> · <span class="mono">${BGI_BAU.mail}</span>`;
+    body = `<section class="verdict v-${level === "allmend" ? "melden" : level}">
+        <p class="stand" style="color:inherit;opacity:.8">${esc(b.label)}</p>
+        <div class="big">${esc(V.big)}</div>
+        <p>${esc(V.txt)}</p>
+        ${V.list ? `<ul>${V.list.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>` : ""}
+        ${b.note ? `<p><strong>Gut zu wissen:</strong> ${esc(b.note)}</p>` : ""}
+        <p><strong>Fragen?</strong> ${contact}</p>
+        ${b.see ? `<p><a href="#${b.see}">Mehr dazu: ${esc(S.find((s) => s.id === b.see).title)} →</a></p>` : ""}
+      </section>
+      ${ctx}
+      <section class="box"><h3>Offizielle Seiten</h3>
+        <ul class="links">${BAU_LINKS.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul>
+        <p class="stand">Zusammengefasst am ${STAND}. Unverbindlich – verbindlich ist der Entscheid des BGI.</p>
+      </section>`;
+  }
+  $("#view").innerHTML = `<a class="back" href="#bau-check">← Anderes Vorhaben</a>${body}${helpBand()}`;
+  const q = $("#schutzQ");
+  if (q) q.addEventListener("click", (e) => { const t = e.target.closest("[data-s]"); if (!t) return; schutzAnswer = t.dataset.s; renderBau(b); });
+  const r = $("#resetSchutz");
+  if (r) r.addEventListener("click", (e) => { e.preventDefault(); schutzAnswer = null; renderBau(b); });
+  window.scrollTo(0, 0);
+}
+
 function renderHome() {
   const q = $("#q").value.trim();
   const list = S.filter((s) => matches(s, q));
   const label = q ? `${list.length} Treffer für «${esc(q)}»` : (branche === "Alle" ? "Häufige Situationen" : `Situationen für ${esc(branche)}`);
   $("#view").innerHTML = `
+    ${q ? "" : bauHero()}
     <section>
       <p class="section-label">${label}</p>
       ${list.length ? `<div class="grid">${list.map(card).join("")}</div>`
@@ -518,6 +684,11 @@ function renderDetail(s) {
         <p class="answer">${esc(s.answer)}</p>
       </header>
       ${rules}
+      ${s.ladder ? `<div class="ladder">
+        <div class="v-frei"><b>Frei</b><span>Weder Bewilligung noch Meldung.</span></div>
+        <div class="v-melden"><b>Melden</b><span>Formular ans BGI, mind. 2 Wochen vorher. Gratis.</span></div>
+        <div class="v-bewilligung"><b>Baubewilligung</b><span>Baubegehren online. Gebühr nach Baukosten.</span></div>
+      </div>${bauHero()}` : ""}
       <div class="cols">
         <section class="box"><h3>So gehst du vor</h3>
           <ol class="steps">${s.steps.map(([t, d]) => `<li><div><b>${esc(t)}</b><span>${esc(d)}</span></div></li>`).join("")}</ol>
@@ -540,6 +711,11 @@ function renderDetail(s) {
 
 function route() {
   const id = location.hash.slice(1);
+  if (id === "bau-check") return renderBauList();
+  if (id.startsWith("bau-")) {
+    const b = BAU.find((x) => "bau-" + x.id === id);
+    if (b) { schutzAnswer = null; return renderBau(b); }
+  }
   const s = S.find((x) => x.id === id);
   if (s) renderDetail(s); else renderHome();
 }
