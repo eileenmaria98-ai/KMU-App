@@ -672,18 +672,15 @@ const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allme
 
 /* Fristen: [Kurzwert, Erklärung]. Der erste Eintrag erscheint auch auf der Karte. */
 const FRISTEN = {
-  gewerbeparkkarte: [["3–5 Arbeitstage", "Bearbeitung des Antrags"]],
-  "zufahrt-innenstadt": [["Mo–Sa 05–11 Uhr", "In diesem Zeitfenster ist Liefern ohne Bewilligung erlaubt"]],
-  "restaurant-eroeffnen": [["ca. 1 Monat", "Entscheid über die Betriebsbewilligung, ab vollständigen Unterlagen"], ["14 Tage", "Änderungen am Lebensmittelbetrieb ans Kantonslabor melden"]],
-  boulevard: [["ca. 3 Monate", "Entscheid über die Nutzungsbewilligung ab Gesuch – für den Sommer früh einreichen"], ["ab 23 Uhr", "Nachtruhe draussen"]],
-  "mulde-geruest": [["10 Arbeitstage vorher", "Meldung Kleinstnutzung (bis 10 m², max. 20 Tage). Kein Einwand innert 5 Arbeitstagen = ok"], ["2 Wochen vorher", "Gesuch für Mulde, Gerüst, Umschlagplatz"], ["3 Monate vorher", "Gesuch für Kran, Containerbühne"]],
-  foodtruck: [["bis 3 Monate", "Bau- und Nutzungsgesuch nach der Zusage"]],
-  "lebensmittel-melden": [["14 Tage", "Änderungen und Schliessung melden"]],
-  "baustelle-entschaedigung": [["3–6 Monate", "Kürzere Sperrungen führen in der Regel zu keiner Entschädigung"], ["10 Jahre", "Verjährung ab Beginn der Immissionen"]],
-  baubewilligung: [["2 Wochen vorher", "Meldung ans BGI vor Arbeitsbeginn; Prüfung meist innert 2 Wochen"], ["2 Monate vorher", "Zusätzlich an die Denkmalpflege, wenn Schutzzone oder Denkmal"]]
+  gewerbeparkkarte: [["3–5 Arbeitstage", "Gewerbeparkkarte"]],
+  "restaurant-eroeffnen": [["ca. 1 Monat", "Betriebsbewilligung, ab vollständigen Unterlagen"]],
+  boulevard: [["ca. 3 Monate", "Nutzungsbewilligung der Allmendverwaltung, ab Gesuch"]],
+  "mulde-geruest": [["5 Arbeitstage", "Meldung Kleinstnutzung: kommt innert 5 Arbeitstagen kein Einwand, ist sie gültig"]],
+  foodtruck: [["bis 3 Monate", "Bau- und Nutzungsbewilligung nach der Zusage"]],
+  baubewilligung: [["ca. 2 Wochen", "Meldeverfahren: Bestätigung durch das BGI"]]
 };
 function fristenBox(list) {
-  return `<section class="fristen" aria-label="Fristen"><h3>Fristen</h3><ul>${list.map(([k, t]) =>
+  return `<section class="fristen" aria-label="Frist bis zur Bewilligung"><h3>Frist bis zur Bewilligung</h3><ul>${list.map(([k, t]) =>
     `<li><b>${esc(k)}</b><span>${esc(t)}</span></li>`).join("")}</ul></section>`;
 }
 const LABEL = { online: "Online-Formular", pdf: "PDF-Formular", seite: "Formular auf dieser Seite", info: "Kein Formular vorhanden – Infoblatt (PDF)" };
@@ -734,9 +731,9 @@ function renderFristen() {
     `<tr>${i === 0 ? `<th scope="rowgroup" rowspan="${FRISTEN[s.id].length}"><a href="#${s.id}">${esc(s.title)}</a></th>` : ""}<td class="mono">${esc(k)}</td><td>${esc(t)}</td></tr>`).join("")).join("");
   $("#view").innerHTML = `
     <a class="back" href="#">← Startseite</a>
-    <section class="detail"><header><h2>Alle Fristen auf einen Blick</h2>
-      <p class="answer">Wie lange vorher du was einreichen musst und wie lange die Ämter brauchen.</p></header>
-      <div class="table-wrap"><table class="ftable"><thead><tr><th>Situation</th><th>Frist</th><th>Was</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <section class="detail"><header><h2>Wie lange bis zur Bewilligung?</h2>
+      <p class="answer">So lange brauchen die Ämter, bis du die Bewilligung hast. Plane diese Zeit ein.</p></header>
+      <div class="table-wrap"><table class="ftable"><thead><tr><th>Situation</th><th>Frist</th><th>Bewilligung</th></tr></thead><tbody>${rows}</tbody></table></div>
       <p class="stand">Zusammengefasst am ${STAND}. Verbindlich sind die offiziellen Seiten.</p>
     </section>
     ${helpBand()}`;
@@ -830,7 +827,7 @@ function renderHome() {
   $("#view").innerHTML = `
     ${q ? "" : `<a class="sos" href="#notfall"><span><b>Notfall?</b> <span>Sofort in die Innenstadt, z.B. bei Wasserrohrbruch – Notfallbewilligung per Telefon</span></span><span class="go">Was tun →</span></a>`}
     ${q ? "" : bauHero()}
-    ${q ? "" : `<a class="sos fristen-link" href="#fristen"><span><b>Alle Fristen</b> <span>Wie lange vorher muss ich was einreichen?</span></span><span class="go">Übersicht →</span></a>`}
+    ${q ? "" : `<a class="sos fristen-link" href="#fristen"><span><b>Fristen</b> <span>Wie lange dauert es bis zur Bewilligung?</span></span><span class="go">Übersicht →</span></a>`}
     <section>
       <p class="section-label">${label}</p>
       ${list.length ? `<div class="grid">${list.map(card).join("")}</div>`
