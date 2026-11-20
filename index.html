@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KMU-Wegweiser Basel</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#31287c">
+<meta name="apple-mobile-web-app-title" content="KMU-Wegweiser">
 <meta name="description" content="Wegweiser des Gewerbeverbands Basel-Stadt für KMU: Bewilligungen, Parkieren, Allmend – nach Situation statt nach Amt.">
 <style>
 /* Layout: Logo-Leiste weiss, Kopf in Dunkelblau mit Farbverlauf-Balken, Situationen als Raster; Detail ersetzt das Raster (Hash-Routing).
@@ -197,6 +199,41 @@ main .wrap { padding-block: 1.75rem 3rem; display: grid; gap: 1.75rem; }
 .ftable tbody th { font-weight: 600; width: 32%; }
 .ftable td.mono { white-space: nowrap; font-weight: 600; }
 
+/* Mobil */
+body[data-view="detail"] .top .intro, body[data-view="detail"] .top .chips { display: none; }
+body[data-view="detail"] .top .wrap { padding-block: 1rem 1.25rem; }
+a.tel { white-space: nowrap; }
+@media (max-width: 640px) {
+  .logobar .wrap { padding-block: .6rem; }
+  .logobar img { height: 38px; }
+  .logobar .tool { font-size: .9rem; }
+  .top .wrap { padding-block: 1.4rem 1.5rem; gap: .9rem; }
+  .top h1 { font-size: 1.65rem; }
+  .top p { font-size: .95rem; }
+  .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; min-height: 44px; padding: .5rem 1rem; font-size: .95rem; }
+  main .wrap { padding-block: 1.25rem 2rem; gap: 1.25rem; }
+  .back { min-height: 44px; }
+  .form-btns { flex-direction: column; }
+  .fbtn { width: 100%; min-height: 48px; }
+  .pick { min-height: 48px; }
+  .card { padding: 1rem; }
+  .detail h2 { font-size: 1.55rem; }
+  .answer { font-size: 1.05rem; }
+  .box, .bau-hero, .verdict { padding: 1rem; }
+  .callout .num { font-size: 1.35rem; }
+  /* Fristen-Tabelle als Karten */
+  .table-wrap { overflow: visible; background: none; border: 0; }
+  .ftable { min-width: 0; }
+  .ftable thead { display: none; }
+  .ftable, .ftable tbody, .ftable tr, .ftable th, .ftable td { display: block; width: auto; }
+  .ftable tr { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: .85rem 1rem; margin-bottom: .6rem; }
+  .ftable th, .ftable td { border: 0; padding: .1rem 0; }
+  .ftable tbody th { width: auto; font-size: 1rem; }
+  .ftable td.mono { font-size: 1.1rem; }
+}
+
 /* Notfall */
 .sos { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between;
   background: var(--no-bg); border: 2px solid var(--no-line); border-radius: 12px; padding: 1rem 1.2rem; color: var(--fg); text-decoration: none; }
@@ -256,11 +293,13 @@ footer p { margin: 0; max-width: 75ch; }
 <header class="top">
   <img class="mark-bg" src="assets/bildmarke-gewerbeverband.svg" alt="" aria-hidden="true">
   <div class="wrap">
-    <h1>Was willst du <em>heute erledigen</em>?</h1>
-    <p>Die Infos des Kantons Basel-Stadt nach Situation sortiert statt nach Amt: was du brauchst, was es kostet, wo du es beantragst.</p>
+    <div class="intro">
+      <h1>Was willst du <em>heute erledigen</em>?</h1>
+      <p>Die Infos des Kantons Basel-Stadt nach Situation sortiert statt nach Amt: was du brauchst, was es kostet, wo du es beantragst.</p>
+    </div>
     <form class="search" role="search" id="searchForm">
-      <label for="q" class="sr" hidden>Suche</label>
-      <input id="q" type="search" autocomplete="off" placeholder="z.B. parkieren, Tische draussen, Mulde, Schild …">
+      <label for="q" hidden>Suche</label>
+      <input id="q" type="search" autocomplete="off" enterkeyhint="search" aria-label="Suche" placeholder="z.B. parkieren, Tische draussen, Mulde, Schild …">
     </form>
     <div class="chips" id="chips" role="group" aria-label="Branche"></div>
   </div>
@@ -904,8 +943,34 @@ function renderDetail(s) {
   window.scrollTo(0, 0);
 }
 
+function setView(v) { document.body.dataset.view = v; }
+
+/* Telefonnummern antippbar machen (nach jedem Rendern). */
+const PHONE = /(\+41 ?\d{2} \d{3} \d{2} \d{2}|0\d{2} \d{3} \d{2} \d{2}|0800 \d{3} \d{3})/g;
+function linkPhones(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) {
+    const n = walker.currentNode;
+    if (n.parentElement.closest("a, button, script, style")) continue;
+    PHONE.lastIndex = 0;
+    if (PHONE.test(n.nodeValue)) nodes.push(n);
+  }
+  for (const n of nodes) {
+    const span = document.createElement("span");
+    span.innerHTML = esc(n.nodeValue).replace(PHONE, (m) =>
+      `<a class="tel" href="tel:${m.replace(/\s/g, "").replace(/^0(?!800)/, "+41")}">${m}</a>`);
+    n.replaceWith(...span.childNodes);
+  }
+}
+
 function route() {
+  route_();
+  linkPhones($("#view"));
+}
+function route_() {
   const id = location.hash.slice(1);
+  setView(id ? "detail" : "home");
   if (id === "bau-check") return renderBauList();
   if (id === "fristen") return renderFristen();
   if (id.startsWith("bau-")) {
@@ -916,7 +981,7 @@ function route() {
   if (s) renderDetail(s); else renderHome();
 }
 
-$("#q").addEventListener("input", () => { if (location.hash) history.replaceState(null, "", location.pathname + location.search); renderHome(); });
+$("#q").addEventListener("input", () => { if (location.hash) history.replaceState(null, "", location.pathname + location.search); setView("home"); renderHome(); linkPhones($("#view")); });
 $("#searchForm").addEventListener("submit", (e) => e.preventDefault());
 window.addEventListener("hashchange", route);
 renderChips();
