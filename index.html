@@ -358,33 +358,26 @@ const S = [
   },
   {
     id: "notfall",
-    title: "Notfall: Was tun?",
-    teaser: "Wasserrohrbruch, Leitung kaputt, sofort in die Innenstadt.",
-    branchen: ["Gastro", "Handwerk & Bau", "Detailhandel"],
-    keys: "notfall notfallbewilligung dringend sofort wasserrohrbruch rohrbruch lift leitung beschädigt gas strom wasser schaden einsturz poller innenstadt pikett",
-    answer: "Eine allgemeine «Notfallbewilligung» gibt es nicht. Je nach Fall gilt: Menschen in Gefahr → Notruf. Leitung beschädigt → sofort IWB. Dringend in die Innenstadt → Kantonspolizei anrufen, die Notfallbewilligung gibt es telefonisch.",
+    title: "Notfall: sofort in die Innenstadt",
+    teaser: "Wasserrohrbruch, stehender Lift – Notfallbewilligung für die Zufahrt per Telefon.",
+    branchen: ["Handwerk & Bau", "Gastro", "Detailhandel"],
+    keys: "notfall notfallbewilligung notfallzufahrt zufahrt innenstadt poller kernzone dringend sofort wasserrohrbruch rohrbruch lift fahrstuhl pikett kantonspolizei",
+    answer: "Bei einem echten Notfall erteilt die Kantonspolizei die Kurzbewilligung für die Zufahrt in die Innenstadt telefonisch: +41 61 208 01 46. Ist es kein Notfall, beantragst du die Kurzbewilligung normal über das Online-Formular.",
     sos: [
-      ["112", "Menschen in Gefahr (allgemeiner Notruf)"],
-      ["118", "Feuer, Gas riechen"],
-      ["0800 400 800", "IWB-Störfallnummer: Strom-, Gas-, Wasser-, Fernwärme- oder Telekomleitung beschädigt"],
-      ["061 208 01 46", "Kantonspolizei: Notfall-Zufahrt Innenstadt (nur echte Notfälle)"]
+      ["061 208 01 46", "Kantonspolizei: Notfallbewilligung für die Zufahrt Innenstadt – nur für Notfälle"]
     ],
     steps: [
-      ["Zuerst Gefahr abwenden", "Menschen in Sicherheit, Notruf wählen. Schaden begrenzen, z.B. Wasser abstellen. Das verlangt auch die Gebäudeversicherung."],
-      ["Leitung getroffen? Sofort IWB anrufen", "Bei Bauarbeiten beschädigte Leitungen müssen sofort über 0800 400 800 gemeldet werden."],
-      ["Dringend in die Innenstadt (Poller)?", "Bei einem echten Notfall (plötzlich, unvorhersehbar, sofortiges Handeln nötig – z.B. Wasserrohrbruch, stehender Lift) erteilt die Kantonspolizei die Kurzbewilligung telefonisch: +41 61 208 01 46. Die Nummer ist nur für Notfälle. Sonst: normales Online-Formular."],
-      ["Reparatur braucht mehr als Sicherung?", "Wenn umgebaut werden muss: vorher das BGI anrufen. Wer ohne nötige Bewilligung baut, riskiert Baustopp und ein nachträgliches Verfahren."],
-      ["Mulde oder Absperrung auf der Strasse?", "Eine Notfall-Regel dafür haben wir nicht gefunden. Ruf die Allmendverwaltung an, bevor du etwas hinstellst."]
+      ["Ist es ein Notfall?", "Ein plötzliches, unvorhersehbares Ereignis, bei dem sofort gehandelt werden muss – z.B. Wasserrohrbruch oder Stillstand eines Lifts."],
+      ["Ja: Kantonspolizei anrufen", "+41 61 208 01 46. Die Kurzbewilligung wird telefonisch erteilt."],
+      ["Nein: Online-Formular", "Dann gilt die normale Kurzbewilligung über das eFormular (CHF 20). Ohne Bewilligung darfst du Mo–Sa 05–11 Uhr liefern."]
     ],
     facts: [
-      ["Notfall-Zufahrt Innenstadt", "Kantonspolizei, telefonisch: <span class='mono'>+41 61 208 01 46</span>"],
-      ["Bau", `${BGI_BAU.name}<br><span class="mono">${BGI_BAU.tel}</span>`],
-      ["Strasse & Trottoir", `${ALLMEND.name}<br><span class="mono">${ALLMEND.tel}</span>`]
+      ["Telefon", "<span class='mono'>+41 61 208 01 46</span> (Kantonspolizei, nur Notfälle)"],
+      ["Kein Notfall", "Kurzbewilligung online, <span class='mono'>CHF 20</span>"]
     ],
     links: [
       ["Zufahrtsbewilligung Kernzone (Abschnitt Notfallbewilligung)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt/zufahrtsbewilligung-zur-kernzone-innenstadt"],
-      ["Verordnung Zufahrt Innenstadt (SG 952.300)", "https://www.gesetzessammlung.bs.ch/app/de/texts_of_law/952.300/versions/2748"],
-      ["Bauen & Installieren im öffentlichen Raum", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/bauen-installieren-im-oeffentlichen-raum"]
+      ["Zufahrt Innenstadt (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt"]
     ]
   },
   {
@@ -835,7 +828,7 @@ function renderHome() {
   const list = S.filter((s) => matches(s, q));
   const label = q ? `${list.length} Treffer für «${esc(q)}»` : (branche === "Alle" ? "Häufige Situationen" : `Situationen für ${esc(branche)}`);
   $("#view").innerHTML = `
-    ${q ? "" : `<a class="sos" href="#notfall"><span><b>Notfall?</b> <span>Wasserrohrbruch, Leitung kaputt, sofort in die Innenstadt</span></span><span class="go">Was tun →</span></a>`}
+    ${q ? "" : `<a class="sos" href="#notfall"><span><b>Notfall?</b> <span>Sofort in die Innenstadt, z.B. bei Wasserrohrbruch – Notfallbewilligung per Telefon</span></span><span class="go">Was tun →</span></a>`}
     ${q ? "" : bauHero()}
     ${q ? "" : `<a class="sos fristen-link" href="#fristen"><span><b>Alle Fristen</b> <span>Wie lange vorher muss ich was einreichen?</span></span><span class="go">Übersicht →</span></a>`}
     <section>
