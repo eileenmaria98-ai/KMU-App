@@ -410,16 +410,19 @@ const S = [
       ]
     },
     steps: [
-      ["Prüfen, ob du berechtigt bist", "Handwerk, Service-Montage, Catering: du brauchst schweres Werkzeug oder Material an wechselnden Orten. Nicht berechtigt: Handelsreisende, Versicherungsagenten, Hauslieferdienste, Bauleiter, PC-Support."],
-      ["Fahrzeug beschriften", "Firmenname gut sichtbar auf dem Fahrzeug. Die Karte gilt nur für das eingetragene Kontrollschild."],
-      ["Online beantragen", "Formular auf bs.ch. Die Karte wird nach dem Ausfüllen auf das gewünschte Datum ausgestellt. Bei nicht handwerkstypischen Fahrzeugen: Fotos des beladenen Fahrzeugs beilegen."],
-      ["Nichts hinterlegen", "Die Karte muss nicht ins Auto gelegt werden. Gültigkeit prüfbar in der App «ParkSmart Basel»."]
+      ["Prüfen, ob du berechtigt bist", "Handwerk, Service-Montage, Catering: du brauchst schweres Werkzeug oder Material an wechselnden Orten. Fahrzeuge, die nicht für den Arbeitseinsatz gebraucht werden, haben keinen Anspruch."],
+      ["Online beantragen", "Lieferwagen und Kombis, die auf einen Gewerbebetrieb registriert sind, gelten als handwerkertypisch. Bei anderen Fahrzeugen Fotos des beladenen Fahrzeugs beilegen."],
+      ["Bestätigung abwarten", "Die Karte wird direkt nach dem Online-Formular ausgestellt, ab deinem Wunschdatum. Nutzen darfst du sie erst, wenn die Bestätigung per Mail (sonst A-Post) da ist oder die Karte in der App «ParkSmart Basel» erscheint."],
+      ["Nichts hinter die Scheibe", "Die kantonale Karte ist digital. Fahrzeug gut sichtbar mit dem Firmennamen beschriften."],
+      ["Ersatzfahrzeug?", "Gesuch Ersatzfahrzeug per E-Mail an die Motorfahrzeugkontrolle. Der Ausdruck gilt als Bewilligung und muss gut sichtbar hinter die Frontscheibe. Länger als 10 Tage: Bewilligung auf das Ersatzfahrzeug umschreiben lassen."],
+      ["Karte verloren?", "Kantonale Karte: nichts tun, sie ist digital. Regionale Karte: Duplikat mit Verlusterklärung beantragen."]
     ],
     facts: [
-      ["Kosten", "<span class='mono'>CHF 200</span> pro Jahr · Monatskarte <span class='mono'>CHF 35</span>, danach <span class='mono'>CHF 15</span>/Monat · Regionale Karte BS+BL <span class='mono'>CHF 250</span>/Jahr · plus <span class='mono'>CHF 20</span> Bearbeitung"],
-      ["Wer stellt aus", "Kanton Basel-Stadt, Online-Formular"]
+      ["Kantonale Karte (nur Basel-Stadt)", "Jahreskarte <span class='mono'>CHF 200</span> · Monatskarte <span class='mono'>CHF 35</span> für den ersten Monat, danach <span class='mono'>CHF 15</span> pro Monat · Änderung (z.B. Kontrollschild) <span class='mono'>CHF 20</span> · plus <span class='mono'>CHF 20</span> Bearbeitung pro Karte"],
+      ["Regionale Karte (Basel-Stadt + Basel-Landschaft)", "Nur als Jahreskarte <span class='mono'>CHF 250</span> · Änderung <span class='mono'>CHF 30</span>"],
+      ["Rückgabe", "Kantonal: ganze, nicht genutzte Monate werden zurückerstattet, abzüglich <span class='mono'>CHF 20</span>. Regional: keine Rückerstattung."],
+      ["Wer stellt aus", "Motorfahrzeugkontrolle der Kantonspolizei, Online-Formular"]
     ],
-    conflict: "In älteren Dokumenten (Verordnung, Medienmitteilung 2010) stehen andere Preise. Massgebend ist das Online-Formular.",
     links: [
       ["Gewerbeparkkarte (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/gewerbeparkkarte"],
       ["Benutzungsbestimmungen Parkkarten", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/benutzungsbestimmungen-parkkarten"]
@@ -712,6 +715,7 @@ const F = {
   bauinst: ["Gesuch Bauinstallation auf Allmend (Mulde, Gerüst …)", "https://formulare.bs.ch/tiefbauamt/temporaere-bauliche-nutzung-oeffentlichem-grund", "online"],
   zufahrt: ["Zufahrtsbewilligung Innenstadt", "https://formulare.bs.ch/mfk/zufahrtsbewilligung", "online"],
   gpk: ["Gesuch Gewerbeparkkarte", "https://media.bs.ch/original_file/4b3b8206469c875075453238a6ed1e989c012a0a/mfk-gesuch-gewerbeparkkarte-2024.pdf", "pdf"],
+  gpkErsatz: ["Gesuch Ersatzfahrzeug", "https://media.bs.ch/original_file/27e72214620dc72f548f8deba2bba82f4c5fcf8c/mfk-ersatzfahrzeug-gpk-2024.pdf", "pdf"],
   gpkOnline: ["Gewerbeparkkarte online beantragen", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/gewerbeparkkarte", "seite"],
   gastroNeu: ["Gesuch Betriebsbewilligung (neu / Wechsel)", "https://media.bs.ch/original_file/5bdf0f434783c6cc03f3b84e530a2cf45ad13e0a/170-201-erteilung-betriebsbewilligung-0.pdf", "pdf"],
   gastroAend: ["Änderung Betriebsbewilligung", "https://media.bs.ch/original_file/53cfe0bba06f99d31eaaa1cf52ed13da95b9beaa/170-202-aenderung-betriebsbewilligung-0.pdf", "pdf"],
@@ -723,7 +727,7 @@ const F = {
   entsch: ["Infoblatt Entschädigungsansprüche", "https://media.bs.ch/original_file/e2ee2b9fcc9e7a0e8ff325ea1e61fe827883e5a2/infoblatt-entschaedigungsansprueche-bei-bauprojekten-des-kan.pdf", "info"]
 };
 const FORMS = {
-  gewerbeparkkarte: [F.gpkOnline, F.gpk],
+  gewerbeparkkarte: [F.gpkOnline, F.gpk, F.gpkErsatz],
   "zufahrt-innenstadt": [F.zufahrt],
   notfall: [F.zufahrt],
   "restaurant-eroeffnen": [F.gastroNeu, F.gastroAend, F.lebensmittel, F.baubegehren],
@@ -741,7 +745,7 @@ const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allme
 
 /* Fristen: [Kurzwert, Erklärung]. Der erste Eintrag erscheint auch auf der Karte. */
 const FRISTEN = {
-  gewerbeparkkarte: [["3–5 Arbeitstage", "Bearbeitung des Antrags"]],
+  gewerbeparkkarte: [["Sofort", "Direkt nach dem Online-Formular, ab Wunschdatum – nutzbar ab Bestätigung per Mail oder in der App ParkSmart Basel"]],
   "restaurant-eroeffnen": [["ca. 1 Monat", "Ab vollständigen Unterlagen"]],
   boulevard: [["ca. 3 Monate", "Nutzungsbewilligung der Allmendverwaltung, ab Gesuch"]],
   "mulde-geruest": [["5 Arbeitstage", "Gültig, wenn innert 5 Arbeitstagen kein Einwand kommt"]],
