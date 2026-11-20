@@ -155,6 +155,17 @@ main .wrap { padding-block: 1.75rem 3rem; display: grid; gap: 1.75rem; }
 .links a::after { content: " ↗"; }
 .stand { font-size: .85rem; color: var(--muted); }
 
+/* Notfall */
+.sos { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between;
+  background: var(--no-bg); border: 2px solid var(--no); border-radius: 12px; padding: 1rem 1.2rem; color: var(--fg); text-decoration: none; }
+.sos b { font: 800 1.15rem var(--f-display); color: var(--no); }
+.sos span { color: var(--fg); }
+.sos .go { font-weight: 700; color: var(--no); white-space: nowrap; }
+.callout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: .75rem; }
+.callout > div { background: var(--no-bg); border-radius: 10px; padding: .9rem 1rem; display: grid; gap: .15rem; }
+.callout .num { font: 700 1.5rem var(--f-mono); color: var(--no); font-variant-numeric: tabular-nums; }
+.callout span { font-size: .92rem; }
+
 /* Bau-Check */
 .bau-hero { background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; padding: 1.3rem 1.35rem; display: grid; gap: 1rem; }
 .bau-hero h2 { font-size: clamp(1.35rem, 3vw, 1.75rem); font-weight: 800; }
@@ -313,6 +324,37 @@ const S = [
     links: [
       ["Gewerbeparkkarte (bs.ch)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/gewerbeparkkarte"],
       ["Benutzungsbestimmungen Parkkarten", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/parkkarten/benutzungsbestimmungen-parkkarten"]
+    ]
+  },
+  {
+    id: "notfall",
+    title: "Notfall: Was tun?",
+    teaser: "Wasserrohrbruch, Leitung kaputt, sofort in die Innenstadt.",
+    branchen: ["Gastro", "Handwerk & Bau", "Detailhandel"],
+    keys: "notfall notfallbewilligung dringend sofort wasserrohrbruch rohrbruch lift leitung beschädigt gas strom wasser schaden einsturz poller innenstadt pikett",
+    answer: "Eine allgemeine «Notfallbewilligung» gibt es nicht. Je nach Fall gilt: Menschen in Gefahr → Notruf. Leitung beschädigt → sofort IWB. Dringend in die Innenstadt → vorher der Behörde melden, dann gibt es die Kurzbewilligung ohne Verzug.",
+    sos: [
+      ["112", "Menschen in Gefahr (allgemeiner Notruf)"],
+      ["118", "Feuer, Gas riechen"],
+      ["0800 400 800", "IWB-Störfallnummer: Strom-, Gas-, Wasser-, Fernwärme- oder Telekomleitung beschädigt"]
+    ],
+    steps: [
+      ["Zuerst Gefahr abwenden", "Menschen in Sicherheit, Notruf wählen. Schaden begrenzen, z.B. Wasser abstellen. Das verlangt auch die Gebäudeversicherung."],
+      ["Leitung getroffen? Sofort IWB anrufen", "Bei Bauarbeiten beschädigte Leitungen müssen sofort über 0800 400 800 gemeldet werden."],
+      ["Dringend in die Innenstadt (Poller)?", "Echter Notfall wie Wasserrohrbruch oder stehender Lift: zuerst der Behörde (Motorfahrzeugkontrolle der Kantonspolizei) melden. Dann wird die Kurzbewilligung ohne Verzug erteilt, CHF 20. Nicht dringend: normales Online-Formular."],
+      ["Reparatur braucht mehr als Sicherung?", "Wenn umgebaut werden muss: vorher das BGI anrufen. Wer ohne nötige Bewilligung baut, riskiert Baustopp und ein nachträgliches Verfahren."],
+      ["Mulde oder Absperrung auf der Strasse?", "Eine Notfall-Regel dafür haben wir nicht gefunden. Ruf die Allmendverwaltung an, bevor du etwas hinstellst."]
+    ],
+    facts: [
+      ["Innenstadt-Zufahrt", "Motorfahrzeugkontrolle der Kantonspolizei · Kurzbewilligung <span class='mono'>CHF 20</span>"],
+      ["Bau", `${BGI_BAU.name}<br><span class="mono">${BGI_BAU.tel}</span>`],
+      ["Strasse & Trottoir", `${ALLMEND.name}<br><span class="mono">${ALLMEND.tel}</span>`]
+    ],
+    conflict: "Die Telefonnummer für Notfall-Zufahrten ausserhalb der Bürozeiten konnten wir nicht bestätigen. Bitte auf der offiziellen Seite nachsehen und vorab im Handy speichern.",
+    links: [
+      ["Zufahrtsbewilligung Kernzone (Abschnitt Notfallbewilligung)", "https://www.bs.ch/themen/mobilitaet/fahren-und-parkieren/zufahrt-innenstadt/zufahrtsbewilligung-zur-kernzone-innenstadt"],
+      ["Verordnung Zufahrt Innenstadt (SG 952.300)", "https://www.gesetzessammlung.bs.ch/app/de/texts_of_law/952.300/versions/2748"],
+      ["Bauen & Installieren im öffentlichen Raum", "https://www.bs.ch/bvd/tiefbauamt/oeffentlichen-raum-nutzen/bauen-installieren-im-oeffentlichen-raum"]
     ]
   },
   {
@@ -661,6 +703,7 @@ function renderHome() {
   const list = S.filter((s) => matches(s, q));
   const label = q ? `${list.length} Treffer für «${esc(q)}»` : (branche === "Alle" ? "Häufige Situationen" : `Situationen für ${esc(branche)}`);
   $("#view").innerHTML = `
+    ${q ? "" : `<a class="sos" href="#notfall"><span><b>Notfall?</b> <span>Wasserrohrbruch, Leitung kaputt, sofort in die Innenstadt</span></span><span class="go">Was tun →</span></a>`}
     ${q ? "" : bauHero()}
     <section>
       <p class="section-label">${label}</p>
@@ -684,6 +727,7 @@ function renderDetail(s) {
         <p class="answer">${esc(s.answer)}</p>
       </header>
       ${rules}
+      ${s.sos ? `<div class="callout">${s.sos.map(([n, t]) => `<div><span class="num">${esc(n)}</span><span>${esc(t)}</span></div>`).join("")}</div>` : ""}
       ${s.ladder ? `<div class="ladder">
         <div class="v-frei"><b>Frei</b><span>Weder Bewilligung noch Meldung.</span></div>
         <div class="v-melden"><b>Melden</b><span>Formular ans BGI, mind. 2 Wochen vorher. Gratis.</span></div>
