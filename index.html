@@ -679,16 +679,15 @@ const VERDICT_FORMS = { melden: [F.meldung], bewilligung: [F.baubegehren], allme
 
 /* Fristen: [Kurzwert, Erklärung]. Der erste Eintrag erscheint auch auf der Karte. */
 const FRISTEN = {
-  gewerbeparkkarte: [["3–5 Arbeitstage", "Bearbeitung des Antrags"], ["Wunschdatum", "Die Karte gilt ab dem Datum, das du im Formular angibst"]],
-  "zufahrt-innenstadt": [["Mo–Sa 05–11 Uhr", "In diesem Zeitfenster ist Liefern ohne Bewilligung erlaubt"], ["Vor der Fahrt", "Kurzbewilligung beantragen, wenn du ausserhalb des Zeitfensters fahren musst"]],
-  notfall: [["Sofort", "Leitungsschaden an IWB melden: 0800 400 800"], ["Vor der Fahrt", "Notfall-Zufahrt bei der Kantonspolizei anrufen: 061 208 01 46"]],
-  "restaurant-eroeffnen": [["ca. 1 Monat", "Entscheid über die Betriebsbewilligung, ab vollständigen Unterlagen"], ["Vor Eröffnung", "Ohne Bewilligung darfst du nicht eröffnen"], ["14 Tage", "Änderungen am Lebensmittelbetrieb ans Kantonslabor melden"]],
+  gewerbeparkkarte: [["3–5 Arbeitstage", "Bearbeitung des Antrags"]],
+  "zufahrt-innenstadt": [["Mo–Sa 05–11 Uhr", "In diesem Zeitfenster ist Liefern ohne Bewilligung erlaubt"]],
+  "restaurant-eroeffnen": [["ca. 1 Monat", "Entscheid über die Betriebsbewilligung, ab vollständigen Unterlagen"], ["14 Tage", "Änderungen am Lebensmittelbetrieb ans Kantonslabor melden"]],
   boulevard: [["ca. 3 Monate", "Entscheid über die Nutzungsbewilligung ab Gesuch – für den Sommer früh einreichen"], ["ab 23 Uhr", "Nachtruhe draussen"]],
   "mulde-geruest": [["10 Arbeitstage vorher", "Meldung Kleinstnutzung (bis 10 m², max. 20 Tage). Kein Einwand innert 5 Arbeitstagen = ok"], ["2 Wochen vorher", "Gesuch für Mulde, Gerüst, Umschlagplatz"], ["3 Monate vorher", "Gesuch für Kran, Containerbühne"]],
-  foodtruck: [["bis 3 Monate", "Bau- und Nutzungsgesuch nach der Zusage"], ["Jährlich", "Bewilligung pro Saison neu beantragen"]],
+  foodtruck: [["bis 3 Monate", "Bau- und Nutzungsgesuch nach der Zusage"]],
   "lebensmittel-melden": [["14 Tage", "Änderungen und Schliessung melden"]],
-  "baustelle-entschaedigung": [["Ab Tag 1", "Umsatz, Fotos und Sperrungen dokumentieren"], ["3–6 Monate", "Kürzere Sperrungen führen in der Regel zu keiner Entschädigung"], ["10 Jahre", "Verjährung ab Beginn der Immissionen"]],
-  baubewilligung: [["2 Wochen vorher", "Meldung ans BGI vor Arbeitsbeginn; Prüfung meist innert 2 Wochen"], ["2 Monate vorher", "Zusätzlich an die Denkmalpflege, wenn Schutzzone oder Denkmal"], ["Vor Baubeginn", "Bei Baubewilligung erst bauen, wenn der Entscheid da ist"]]
+  "baustelle-entschaedigung": [["3–6 Monate", "Kürzere Sperrungen führen in der Regel zu keiner Entschädigung"], ["10 Jahre", "Verjährung ab Beginn der Immissionen"]],
+  baubewilligung: [["2 Wochen vorher", "Meldung ans BGI vor Arbeitsbeginn; Prüfung meist innert 2 Wochen"], ["2 Monate vorher", "Zusätzlich an die Denkmalpflege, wenn Schutzzone oder Denkmal"]]
 };
 function fristenBox(list) {
   return `<section class="fristen" aria-label="Fristen"><h3>Fristen</h3><ul>${list.map(([k, t]) =>
